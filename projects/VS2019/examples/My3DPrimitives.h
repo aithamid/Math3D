@@ -1,5 +1,6 @@
 #define MY3DPRIMITIVES_H
-
+#include "raylib.h"
+#include "raymath.h"
 struct ReferenceFrame {
     Vector3 origin;
     Vector3 i, j, k;
