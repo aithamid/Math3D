@@ -31,7 +31,8 @@ struct ReferenceFrame {
     }
     void RotateByQuaternion(Quaternion qRot)
     {
-        q = QuaternionMultiply(qRot, q);
+        q = QuaternionFromAxisAngle(Vector3Normalize({ 1,1,1 }),
+            PI / 4);
         i = Vector3RotateByQuaternion({ 1,0,0 }, q);
         j = Vector3RotateByQuaternion({ 0,1,0 }, q);
         k = Vector3RotateByQuaternion({ 0,0,1 }, q);
@@ -85,22 +86,85 @@ typedef struct RoundedBox {
 } RoundedBox;
 
 
-void MyDrawPolygonQuad(Quad quad, Color color = LIGHTGRAY)
+void MyDrawQuad(Quad quad, bool drawPolygon = true, bool drawWireframe = true,
+    Color polygonColor = LIGHTGRAY, Color wireframeColor = DARKGRAY)
 {
     float x = quad.extents.x;
     float z = quad.extents.z;
 
-    Vector3 pt1{ x/2,0,-z/2 };
-    Vector3 pt2{ -x/2,0,z/2 };
-    Vector3 pt3{ x/2,0,z/2 };
+    Vector3 pt1, pt2, pt3, pt4;
+    pt1 = Vector3Add(quad.ref.origin, { x,0,z });
+    pt2 = Vector3Add(quad.ref.origin, { x,0,-z });
+    pt3 = Vector3Add(quad.ref.origin, { -x,0,z });
+    pt4 = Vector3Add(quad.ref.origin, { -x,0,-z });
 
-    DrawTriangle3D(pt1, pt2, pt3, RED);
-    
-    pt3.x = -x/2;
-    pt3.z = -z/2;
-    DrawTriangle3D(pt2, pt1, pt3, YELLOW);
+    pt1 = Vector3RotateByQuaternion(pt1, quad.ref.q);
+    pt2 = Vector3RotateByQuaternion(pt2, quad.ref.q);
+    pt3 = Vector3RotateByQuaternion(pt3, quad.ref.q);
+    pt4 = Vector3RotateByQuaternion(pt4, quad.ref.q);
 
+    if (drawPolygon)
+    {
+        DrawTriangle3D(pt1, pt2, pt3, polygonColor);
+        DrawTriangle3D(pt2, pt1, pt3, polygonColor); // Mettre en comm
+        DrawTriangle3D(pt2, pt4, pt3, polygonColor); 
+        DrawTriangle3D(pt4, pt2, pt3, polygonColor); // Mettre en comm
+    }
 
+    if (drawWireframe)
+    {
+        DrawLine3D(pt1, pt2, wireframeColor);
+        DrawLine3D(pt2, pt3, wireframeColor);
+        DrawLine3D(pt3, pt4, wireframeColor);
+        DrawLine3D(pt1, pt3, wireframeColor);
+    }
+}
+
+void MyDrawDisk(Disk disk, int nSectors, bool drawPolygon = true, bool
+    drawWireframe = true, Color polygonColor = LIGHTGRAY, Color wireframeColor =
+    DARKGRAY)
+{
+    Vector3 pt1{ 0,0,0 };
+    Vector3 pt2{ 0,0,0 };
+    Vector3 pt3{ 0,0,0 };
+
+    float theta = 0;
+
+    for (int i = 0; i < nSectors; i++)
+    {
+        Vector3 pt1, pt2, pt3;
+        pt1 = Vector3Add(disk.ref.origin, { disk.radius * sin(theta),
+                                          0,disk.radius * cos(theta) });
+
+        pt2 = Vector3Add(disk.ref.origin, { pt2.x = disk.radius * sin(theta + (2 * PI) / nSectors),
+                                          0,pt2.z = disk.radius * cos(theta + (2 * PI) / nSectors) });
+
+        pt3 = Vector3Add(disk.ref.origin, { 0,0,0 });
+        
+        pt1 = Vector3RotateByQuaternion(pt1, disk.ref.q);
+        pt2 = Vector3RotateByQuaternion(pt2, disk.ref.q);
+        pt3 = Vector3RotateByQuaternion(pt3, disk.ref.q);
+
+        if (drawPolygon) DrawTriangle3D(pt1, pt2, pt3, polygonColor);
+
+        if (drawWireframe)
+        {
+            DrawLine3D(pt1, pt2, wireframeColor);
+            DrawLine3D(pt2, pt3, wireframeColor);
+            DrawLine3D(pt1, pt3, wireframeColor);
+        }
+
+        theta += (2 * PI) / nSectors;
+    }
+}
+
+void MyDrawPolygonDisk(Disk disk, int nSectors, Color color = LIGHTGRAY)
+{
+    MyDrawDisk(disk, nSectors, true, false, color, DARKGRAY);
+}
+void MyDrawWireframeDisk(Disk disk, int nSectors, Color color = DARKGRAY)
+{
+    MyDrawDisk(disk, nSectors, false, true, LIGHTGRAY, color);
 }
 
 void MyDrawPolygonBox(Box box, Color color = LIGHTGRAY)
@@ -120,27 +184,6 @@ void MyDrawPolygonBox(Box box, Color color = LIGHTGRAY)
     DrawTriangle3D(pt2, pt1, pt3, YELLOW);
 
 }
-
-
-void MyDrawDisk(Disk disk, int nb, Color color = LIGHTGRAY)
-{
-        Vector3 pt1{ 0,0,0 };
-        Vector3 pt2{ 0,0,0 };
-        Vector3 pt3{ 0,0,0 };
-
-        float theta = 0;
-
-        for (int i = 0; i < nb; i++)
-        {
-            pt1.x = disk.radius * sin(theta);
-            pt1.z = disk.radius * cos(theta);
-
-            pt2.x = disk.radius * sin(theta + (2 * PI) / nb);
-            pt2.z = disk.radius * cos(theta + (2 * PI) / nb);
-            DrawTriangle3D(pt1, pt2, pt3, RED);
-            theta += (2 * PI) / nb;
-        }
- }
 
 
 Vector3 Find_coo(int i,int nMeridians, int j, int nParallels, float r, float portion = PI, Vector3 position = {0,0,0})
@@ -206,6 +249,8 @@ void MyDrawCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, bool
     drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
     Color wireframeColor = DARKGRAY) {
 
+    Vector3 origin = cylinder.ref.origin;
+
     Vector3 pt1{ 0,cylinder.halfHeight,0 };
     Vector3 pt2{ 0,cylinder.halfHeight,0 };
     Vector3 pt3{ 0,cylinder.halfHeight,0 };
@@ -214,6 +259,28 @@ void MyDrawCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, bool
     Vector3 pt6{ 0,-cylinder.halfHeight,0 };
 
     float theta = 0;
+
+    if (drawCaps)
+    {
+        // DISK HAUT
+        ReferenceFrame ref1 = ReferenceFrame(
+            Vector3Add(origin, { 0,cylinder.halfHeight,0 }),
+            cylinder.ref.q
+        );
+        Disk disk1 = { ref1,cylinder.radius };
+        MyDrawDisk(disk1, nSectors);
+
+        // DISK BAS
+        Quaternion alenvers = QuaternionFromAxisAngle(
+            Vector3Normalize({ 0,0,1 }),
+            PI);
+        ReferenceFrame ref2 = ReferenceFrame(
+                                {origin.x,cylinder.halfHeight -origin.y,origin.z},
+                                QuaternionMultiply(alenvers, cylinder.ref.q)
+        );
+        Disk disk2 = { ref2,cylinder.radius };
+        MyDrawDisk(disk2, nSectors);
+    }
 
     for (int i = 0; i < nSectors; i++)
     {
@@ -230,32 +297,22 @@ void MyDrawCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, bool
         pt5.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
         pt5.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
 
-        if (drawWireframe)
-        {
-            DrawLine3D(pt1, pt2, wireframeColor);
-            DrawLine3D(pt4, pt5, wireframeColor);
-            DrawLine3D(pt1, pt4, wireframeColor);
-            DrawLine3D(pt2, pt5, wireframeColor);
-            if (drawCaps)
-            {
-                DrawLine3D(pt1, pt3, wireframeColor);
-                DrawLine3D(pt2, pt3, wireframeColor);
-                DrawLine3D(pt4, pt6, wireframeColor);
-                DrawLine3D(pt5, pt6, wireframeColor);
-            }
-        }
+        // 
 
-        // FACADES
-        if (drawPolygon)
-        {
-            DrawTriangle3D(pt2, pt1, pt4, polygonColor);
-            DrawTriangle3D(pt4, pt5, pt2, polygonColor);
-            if (drawCaps)
-            {
-                DrawTriangle3D(pt1, pt2, pt3, polygonColor);
-                DrawTriangle3D(pt5, pt4, pt6, polygonColor);
-            }
-        }
+
+        Quaternion plat = QuaternionFromAxisAngle(
+            Vector3Normalize({ 0,0,1 }),
+            PI / 2);
+
+        Vector3 v = Vector3Add(origin, pt1);
+
+        ReferenceFrame ref = ReferenceFrame(
+            v,
+            QuaternionMultiply(plat, cylinder.ref.q)
+        );
+        
+        Quad quad = { ref,{5,0,2} };
+        MyDrawQuad(quad);
         theta += (2 * PI) / nSectors;
     }
 }
@@ -425,4 +482,28 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
 
         }
     }
+
+    //roundedBox.ref
+}
+
+void MyTest(Quad quad, Color color = LIGHTGRAY)
+{
+    float x = quad.extents.x;
+    float z = quad.extents.z;
+
+    Vector3 pt1, pt2, pt3, pt4;
+    pt1 = Vector3Add(quad.ref.origin, { x,0,z});
+    pt2 = Vector3Add(quad.ref.origin, { x,0,-z});
+    pt3 = Vector3Add(quad.ref.origin, { -x,0,z});
+    pt4 = Vector3Add(quad.ref.origin, { -x,0,-z });
+
+    pt1 = Vector3RotateByQuaternion(pt1, quad.ref.q);
+    pt2 = Vector3RotateByQuaternion(pt2, quad.ref.q);
+    pt3 = Vector3RotateByQuaternion(pt3, quad.ref.q);
+    pt4 = Vector3RotateByQuaternion(pt4, quad.ref.q);
+
+    DrawTriangle3D(pt1, pt2, pt3, RED);
+    DrawTriangle3D(pt2, pt1, pt3, RED);
+    DrawTriangle3D(pt3, pt2, pt4, YELLOW);
+    DrawTriangle3D(pt2, pt3, pt4, YELLOW);
 }
