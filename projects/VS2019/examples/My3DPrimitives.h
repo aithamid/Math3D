@@ -81,20 +81,102 @@ typedef struct RoundedBox {
 } RoundedBox;
 
 
+
+//QUAD
+void MyDrawWireframeQuad(Quad quad, Color color = LIGHTGRAY)
+{
+	float x = quad.extents.x;
+	float y = quad.extents.y;
+	float z = quad.extents.z;
+
+	Vector3 pt1{ x / 2, y,z / 2 };
+	Vector3 pt2{ x / 2, y, -z / 2 };
+	Vector3 pt3{ -x / 2, y, -z / 2 };
+	Vector3 pt4{ -x / 2, y, z / 2 };
+
+	DrawLine3D(pt1,pt2,color);
+	DrawLine3D(pt2,pt3,color);
+	DrawLine3D(pt3,pt4,color);
+	DrawLine3D(pt4,pt1,color);
+	
+}
+
+
+
 void MyDrawPolygonQuad(Quad quad, Color color = LIGHTGRAY)
 {
 	float x = quad.extents.x;
+	float y = quad.extents.y;
 	float z = quad.extents.z;
 
-	Vector3 pt1{ x / 2,0,-z / 2 };
-	Vector3 pt2{ -x / 2,0,z / 2 };
-	Vector3 pt3{ x / 2,0,z / 2 };
+	Vector3 pt1{  x/2, y,-z/2 };
+	Vector3 pt2{ -x/2, y, z/ 2 };
+	Vector3 pt3{  x/2, y, z/2 };
 
-	DrawTriangle3D(pt1, pt2, pt3, RED);
+	DrawTriangle3D(pt1, pt2, pt3, color);
 
 	pt3.x = -x / 2;
 	pt3.z = -z / 2;
-	DrawTriangle3D(pt2, pt1, pt3, YELLOW);
+	DrawTriangle3D(pt2, pt1, pt3, color);
+
+
+}
+
+
+void MyDrawQuad(Quad quad, bool drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY, Color wireframeColor = DARKGRAY)
+{
+	if (drawPolygon)
+	{
+		MyDrawPolygonQuad(quad, polygonColor);
+	}
+	if (drawWireframe)
+	{
+		MyDrawWireframeQuad(quad, wireframeColor);
+	}
+}
+
+//BOX
+void MyDrawWireframeBox(Box box, Color color = DARKGRAY)
+{
+	float x = box.extents.x;
+	float y = box.extents.y;
+	float z = box.extents.z;
+
+	Vector3 pt1{ x / 2, y/2,z / 2 };
+	Vector3 pt2{ x / 2, y/2, -z / 2 };
+	Vector3 pt3{ -x / 2, y/2, -z / 2 };
+	Vector3 pt4{ -x / 2, y/2, z / 2 };
+
+	DrawLine3D(pt1, pt2, color);
+	DrawLine3D(pt2, pt3, color);
+	DrawLine3D(pt3, pt4, color);
+	DrawLine3D(pt4, pt1, color);
+
+	pt1 = { x / 2, -y / 2,z / 2 };
+	pt2 = { x / 2, -y / 2, -z / 2 };
+	pt3 = { -x / 2, -y / 2, -z / 2 };
+	pt4 = { -x / 2, -y / 2, z / 2 };
+
+	DrawLine3D(pt1, pt2, color);
+	DrawLine3D(pt2, pt3, color);
+	DrawLine3D(pt3, pt4, color);
+	DrawLine3D(pt4, pt1, color);
+
+	pt1 = { x / 2, y / 2,z / 2 };
+	pt2 = { x / 2, -y / 2,z / 2 };
+	pt3 = { x / 2, y / 2,-z / 2 };
+	pt4 = { x / 2, -y / 2,-z / 2 };
+
+	DrawLine3D(pt1, pt2, color);
+	DrawLine3D(pt3, pt4, color);
+
+	pt1 = { -x / 2, y / 2,z / 2 };
+	pt2 = { -x / 2, -y / 2,z / 2 };
+	pt3 = { -x / 2, y / 2,-z / 2 };
+	pt4 = { -x / 2, -y / 2,-z / 2 };
+
+	DrawLine3D(pt1, pt2, color);
+	DrawLine3D(pt3, pt4, color);
 
 
 }
@@ -165,7 +247,7 @@ void MyDrawPolygonBox(Box box, Color color = LIGHTGRAY)
 
 	//Fourth Vertical quad
 	pt1 = { -x / 2,  y / 2, -z / 2 };
-	pt2 = {  x / 2,  y / 2, -z / 2 };
+	pt2 = { x / 2,  y / 2, -z / 2 };
 	pt3 = { -x / 2, -y / 2, -z / 2 };
 	DrawTriangle3D(pt1, pt2, pt3, color);
 
@@ -174,7 +256,18 @@ void MyDrawPolygonBox(Box box, Color color = LIGHTGRAY)
 	pt1.x = x / 2;
 	DrawTriangle3D(pt2, pt1, pt3, color);
 
+}
 
+void MyDrawBox(Box box, bool drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY, Color wireframeColor = DARKGRAY)
+{
+	if (drawPolygon)
+	{
+		MyDrawPolygonBox(box, polygonColor);
+	}
+	if (drawWireframe)
+	{
+		MyDrawWireframeBox(box, wireframeColor);
+	}
 }
 
 
