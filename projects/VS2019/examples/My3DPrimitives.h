@@ -395,5 +395,34 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
     drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
     Color wireframeColor = DARKGRAY)
 {
+    float r = roundedBox.radius;
 
+    for (int i = 1; i < nSectors/2 + 1; i++)
+    {
+        for (int j = 1; j < nSectors/2 + 1; j++)
+        {
+            Vector3 p = { 0,0,0 }; // position de la sphere 
+            Vector3 p1 = Find_coo(i - 1, nSectors, j - 1, nSectors, r, HALF_PI, p);
+            Vector3 p2 = Find_coo(i - 1, nSectors, j, nSectors, r, HALF_PI, p);
+            Vector3 p3 = Find_coo(i, nSectors, j - 1, nSectors, r, HALF_PI, p);
+            Vector3 p4 = Find_coo(i, nSectors, j, nSectors, r, HALF_PI, p);
+
+            if (drawPolygon)
+            {
+                DrawTriangle3D(p1, p2, p3, polygonColor);
+                DrawTriangle3D(p2, p1, p3, polygonColor);
+                DrawTriangle3D(p2, p4, p3, polygonColor);
+                DrawTriangle3D(p4, p2, p3, polygonColor);
+            }
+
+            if (drawWireframe)
+            {
+                DrawLine3D(p1, p2, wireframeColor);
+                DrawLine3D(p2, p3, wireframeColor);
+                DrawLine3D(p3, p4, wireframeColor);
+                DrawLine3D(p1, p3, wireframeColor);
+            }
+
+        }
+    }
 }
