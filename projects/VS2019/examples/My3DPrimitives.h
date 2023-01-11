@@ -83,8 +83,6 @@ typedef struct RoundedBox {
 
 void MyDrawPolygonQuad(Quad quad, Color color = LIGHTGRAY)
 {
-
-
     float x = quad.extents.x;
     float z = quad.extents.z;
 
@@ -131,8 +129,26 @@ void MyDrawPolygonQuad(Quad quad, Color color = LIGHTGRAY)
 
 void MyDrawDisk(Disk disk, int nb, Color color = LIGHTGRAY)
 {
+        Vector3 pt1{ 0,0,0 };
+        Vector3 pt2{ 0,0,0 };
+        Vector3 pt3{ 0,0,0 };
 
+        float theta = 0;
 
+        for (int i = 0; i < nb; i++)
+        {
+            pt1.x = disk.radius * sin(theta);
+            pt1.z = disk.radius * cos(theta);
+
+            pt2.x = disk.radius * sin(theta + (2 * PI) / nb);
+            pt2.z = disk.radius * cos(theta + (2 * PI) / nb);
+            DrawTriangle3D(pt1, pt2, pt3, RED);
+            theta += (2 * PI) / nb;
+        }
+ }
+
+void MyDrawSphere(Sphere sphere, int nb, Color color = LIGHTGRAY)
+{
     float r = nb;
     const int total = 20;
     Vector3 globe[total + 1][total + 1];
@@ -173,4 +189,3 @@ void MyDrawDisk(Disk disk, int nb, Color color = LIGHTGRAY)
         }
     }
 }
-

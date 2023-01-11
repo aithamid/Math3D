@@ -125,9 +125,13 @@ void DrawPartie3()
 	Quad quad = { ref,{2.5,5,5} };
 	//MyDrawPolygonQuad(quad);
 
+	Sphere sphere = { ref,5 };
+
+	//MyDrawSphere(sphere, 2, RED);
+
 	Disk disk = { ref,5 };
 
-	MyDrawDisk(disk, 2, BLACK);
+	MyDrawDisk(disk, 2, RED);
 
 	 
 	
