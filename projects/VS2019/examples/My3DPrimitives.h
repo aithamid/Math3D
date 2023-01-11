@@ -86,43 +86,34 @@ void MyDrawPolygonQuad(Quad quad, Color color = LIGHTGRAY)
     float x = quad.extents.x;
     float z = quad.extents.z;
 
-    Vector3 pt1{ x,0,0 };
-    Vector3 pt2{ 0,0,z };
-    Vector3 pt3{ 0,0,0 };
+    Vector3 pt1{ x/2,0,-z/2 };
+    Vector3 pt2{ -x/2,0,z/2 };
+    Vector3 pt3{ x/2,0,z/2 };
 
-    DrawTriangle3D(pt2, pt1, pt3, RED);
+    DrawTriangle3D(pt1, pt2, pt3, RED);
     
-    pt3.x = x;
-    pt3.z = z;
-    DrawTriangle3D(pt1, pt2, pt3, YELLOW);
+    pt3.x = -x/2;
+    pt3.z = -z/2;
+    DrawTriangle3D(pt2, pt1, pt3, YELLOW);
 
-    pt3.x = 0;
-    pt3.z = 0;
-    pt1.x = -x;
-    DrawTriangle3D(pt1, pt2, pt3, GREEN);
 
-    pt3.x = -x;
-    pt3.z = z;
-    DrawTriangle3D(pt2, pt1, pt3, BLACK);
+}
 
-    pt3.x = 0;
-    pt3.z = 0;
-    pt2.z = -z;
-    DrawTriangle3D(pt2, pt1, pt3, VIOLET);
+void MyDrawPolygonBox(Box box, Color color = LIGHTGRAY)
+{
+    //float x = box.extents.x;
+    //float y = box.extents.y;
+    //float z = box.extents.z;
 
-    pt3.x = -x;
-    pt3.z = -z;
-    DrawTriangle3D(pt1, pt2, pt3, WHITE);
+    //Vector3 pt1{ x / 2,0,-z / 2 };
+    //Vector3 pt2{ -x / 2,0,z / 2 };
+    //Vector3 pt3{ x / 2,0,z / 2 };
 
-    pt3.x = 0;
-    pt3.z = 0;
-    pt1.x = x;
-    DrawTriangle3D(pt1, pt2, pt3, BLUE);
-    
-    
-    pt3.x = x;
-    pt3.z = -z;
-    DrawTriangle3D(pt2, pt1, pt3, color);
+    //DrawTriangle3D(pt1, pt2, pt3, RED);
+
+    //pt3.x = -x / 2;
+    //pt3.z = -z / 2;
+    //DrawTriangle3D(pt2, pt1, pt3, YELLOW);
 
 }
 
