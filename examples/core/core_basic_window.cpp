@@ -96,25 +96,6 @@ Spherical CartesianToSpherical(Vector3 cart) {
 	return sph;
 }
 
-void DrawPartie1()
-{
-	Vector3 pt1 = { 12,5, 6 };
-	Vector3 pt2 = { 1,16, 12 };
-	DrawSphere({ pt1 }, .05f, RED);
-	DrawSphere({ pt2 }, .05f, GREEN);
-
-	DrawLine3D({ pt1 }, { pt2 }, DARKGRAY);
-}
-
-void DrawPartie2()
-{
-	Vector3 pts[3];
-	pts[0] = {5,10, 4};
-	pts[1] = {9 ,2, -6};
-	pts[2] = { 3,-3, 4 };
-	DrawTriangleStrip3D(pts,3, BLUE);
-}
-
 void DrawPartie3()
 {
 	// QUAD DISPLAY TEST
@@ -128,14 +109,6 @@ void DrawPartie3()
 	Sphere sphere = { ref,5 };
 
 	//MyDrawSphere(sphere, 2, RED);
-
-	Disk disk = { ref,5 };
-
-	MyDrawDisk(disk, 2, RED);
-
-	 
-	
-
 }
 
 Vector2 MyUpdateOrbitalCamera(Camera3D* Camera, Spherical* coordonnes, Vector2 prevMousePos)
@@ -266,6 +239,16 @@ int main(int argc, char* argv[])
 			//DrawPartie1();
 			//DrawPartie2();
 			DrawPartie3();
+			ReferenceFrame ref = ReferenceFrame(
+				{ 0,2,0 },
+				QuaternionFromAxisAngle(Vector3Normalize({ 1,1,1 }),
+					PI / 4));
+			Disk disk = { ref,5 };
+
+			//MyDrawDisk(disk, 60, RED);
+
+			Cylinder cylinder = { ref,5,5 };
+			MyDrawCylinder(cylinder, 20, false, true, true, BLUE,BLACK);
 		}
 		EndMode3D();
 

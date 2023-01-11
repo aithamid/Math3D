@@ -180,3 +180,143 @@ void MyDrawSphere(Sphere sphere, int nb, Color color = LIGHTGRAY)
         }
     }
 }
+
+void MyDrawPolygonCylinder(Cylinder cylinder, int nSectors, bool drawCaps =
+    false, Color color = LIGHTGRAY) {
+
+    Vector3 pt1{ 0,cylinder.halfHeight,0 };
+    Vector3 pt2{ 0,cylinder.halfHeight,0 };
+    Vector3 pt3{ 0,cylinder.halfHeight,0 };
+    Vector3 pt4{ 0,-cylinder.halfHeight,0 };
+    Vector3 pt5{ 0,-cylinder.halfHeight,0 };
+    Vector3 pt6{ 0,-cylinder.halfHeight,0 };
+
+    float theta = 0;
+
+    for (int i = 0; i < nSectors; i++)
+    {
+        pt1.x = cylinder.radius * sin(theta);
+        pt1.z = cylinder.radius * cos(theta);
+
+        pt2.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
+        pt2.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
+        
+        
+        pt4.x = cylinder.radius * sin(theta);
+        pt4.z = cylinder.radius * cos(theta);
+
+        pt5.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
+        pt5.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
+
+        // FACADES
+        DrawTriangle3D(pt2, pt1, pt4, color);
+        DrawTriangle3D(pt4, pt5, pt2, color);
+        theta += (2 * PI) / nSectors;
+
+        if (drawCaps)
+        {
+            DrawTriangle3D(pt1, pt2, pt3, color);
+            DrawTriangle3D(pt5, pt4, pt6, color);
+        }
+    }
+}
+void MyDrawWireframeCylinder(Cylinder cylinder, int nSectors, bool drawCaps =
+    false, Color color = LIGHTGRAY)
+{
+
+    Vector3 pt1{ 0,cylinder.halfHeight,0 };
+    Vector3 pt2{ 0,cylinder.halfHeight,0 };
+    Vector3 pt3{ 0,cylinder.halfHeight,0 };
+    Vector3 pt4{ 0,-cylinder.halfHeight,0 };
+    Vector3 pt5{ 0,-cylinder.halfHeight,0 };
+    Vector3 pt6{ 0,-cylinder.halfHeight,0 };
+
+    float theta = 0;
+
+    for (int i = 0; i < nSectors; i++)
+    {
+        pt1.x = cylinder.radius * sin(theta);
+        pt1.z = cylinder.radius * cos(theta);
+
+        pt2.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
+        pt2.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
+
+
+        pt4.x = cylinder.radius * sin(theta);
+        pt4.z = cylinder.radius * cos(theta);
+
+        pt5.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
+        pt5.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
+
+        // LIGNES
+        DrawLine3D(pt1, pt2, color);
+        DrawLine3D(pt4, pt5, color);
+        DrawLine3D(pt1, pt4, color);
+        DrawLine3D(pt2, pt5, color);
+        if (drawCaps)
+        {
+            DrawLine3D(pt1, pt3, color);
+            DrawLine3D(pt2, pt3, color);
+            DrawLine3D(pt4, pt6, color);
+            DrawLine3D(pt5, pt6, color);
+        }
+        theta += (2 * PI) / nSectors;
+    }
+}
+void MyDrawCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, bool
+    drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
+    Color wireframeColor = DARKGRAY) {
+
+    Vector3 pt1{ 0,cylinder.halfHeight,0 };
+    Vector3 pt2{ 0,cylinder.halfHeight,0 };
+    Vector3 pt3{ 0,cylinder.halfHeight,0 };
+    Vector3 pt4{ 0,-cylinder.halfHeight,0 };
+    Vector3 pt5{ 0,-cylinder.halfHeight,0 };
+    Vector3 pt6{ 0,-cylinder.halfHeight,0 };
+
+    float theta = 0;
+
+    for (int i = 0; i < nSectors; i++)
+    {
+        pt1.x = cylinder.radius * sin(theta);
+        pt1.z = cylinder.radius * cos(theta);
+
+        pt2.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
+        pt2.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
+
+
+        pt4.x = cylinder.radius * sin(theta);
+        pt4.z = cylinder.radius * cos(theta);
+
+        pt5.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
+        pt5.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
+
+        if (drawWireframe)
+        {
+            DrawLine3D(pt1, pt2, wireframeColor);
+            DrawLine3D(pt4, pt5, wireframeColor);
+            DrawLine3D(pt1, pt4, wireframeColor);
+            DrawLine3D(pt2, pt5, wireframeColor);
+            if (drawCaps)
+            {
+                DrawLine3D(pt1, pt3, wireframeColor);
+                DrawLine3D(pt2, pt3, wireframeColor);
+                DrawLine3D(pt4, pt6, wireframeColor);
+                DrawLine3D(pt5, pt6, wireframeColor);
+            }
+        }
+
+        // FACADES
+        if (drawPolygon)
+        {
+            DrawTriangle3D(pt2, pt1, pt4, polygonColor);
+            DrawTriangle3D(pt4, pt5, pt2, polygonColor);
+            if (drawCaps)
+            {
+                DrawTriangle3D(pt1, pt2, pt3, polygonColor);
+                DrawTriangle3D(pt5, pt4, pt6, polygonColor);
+            }
+        }
+        theta += (2 * PI) / nSectors;
+    }
+}
