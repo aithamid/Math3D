@@ -1,6 +1,10 @@
 #define MY3DPRIMITIVES_H
 #include "raylib.h"
 #include "raymath.h"
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
 struct ReferenceFrame {
     Vector3 origin;
     Vector3 i, j, k;
@@ -101,19 +105,19 @@ void MyDrawPolygonQuad(Quad quad, Color color = LIGHTGRAY)
 
 void MyDrawPolygonBox(Box box, Color color = LIGHTGRAY)
 {
-    //float x = box.extents.x;
-    //float y = box.extents.y;
-    //float z = box.extents.z;
+    float x = box.extents.x;
+    float y = box.extents.y;
+    float z = box.extents.z;
 
-    //Vector3 pt1{ x / 2,0,-z / 2 };
-    //Vector3 pt2{ -x / 2,0,z / 2 };
-    //Vector3 pt3{ x / 2,0,z / 2 };
+    Vector3 pt1{ x / 2,0,-z / 2 };
+    Vector3 pt2{ -x / 2,0,z / 2 };
+    Vector3 pt3{ x / 2,0,z / 2 };
 
-    //DrawTriangle3D(pt1, pt2, pt3, RED);
+    DrawTriangle3D(pt1, pt2, pt3, RED);
 
-    //pt3.x = -x / 2;
-    //pt3.z = -z / 2;
-    //DrawTriangle3D(pt2, pt1, pt3, YELLOW);
+    pt3.x = -x / 2;
+    pt3.z = -z / 2;
+    DrawTriangle3D(pt2, pt1, pt3, YELLOW);
 
 }
 
@@ -138,131 +142,66 @@ void MyDrawDisk(Disk disk, int nb, Color color = LIGHTGRAY)
         }
  }
 
-void MyDrawSphere(Sphere sphere, int nb, Color color = LIGHTGRAY)
+
+Vector3 Find_coo(int i,int nMeridians, int j, int nParallels, float r, float portion = PI, Vector3 position = {0,0,0})
 {
-    float r = nb;
-    const int total = 20;
-    Vector3 globe[total + 1][total + 1];
-    for (int i = 0; i < total + 1; i++)
-    {
-        float lon = (i - 0) * (PI - -PI) / (total - 0) + -PI;
-        for (int j = 0; j < total + 1; j++)
-        {
-            float lat = (j - 0) * (HALF_PI - -HALF_PI) / (total - 0) + -HALF_PI;
-            float x = r * sin(lon) * cos(lat);
-            float z = r * sin(lon) * sin(lat);
-            float y = r * cos(lon);
-            globe[i][j] = { x,y,z };
-        }
-    }
-
-    for (int i = 1; i < total + 1; i++)
-    {
-
-        for (int j = 1; j < total + 1; j++)
-        {
-
-            Vector3 p1 = globe[i - 1][j - 1];
-            Vector3 p2 = globe[i - 1][j];
-            Vector3 p3 = globe[i][j - 1];
-            Vector3 p4 = globe[i][j];
-
-            Vector3 t1[3] = { p1,p2,p3 };
-            Vector3 t2[3] = { p2,p1,p3 };
-
-            DrawTriangle3D(p1, p2, p3, color);
-            DrawTriangle3D(p2, p1, p3, color);
-            DrawTriangle3D(p2, p4, p3, color);
-            DrawTriangle3D(p4, p2, p3, color);
-
-            //DrawTriangleStrip3D(t1, 3, RED);
-            //DrawTriangleStrip3D(t2, 2, RED);
-        }
-    }
+    float lon = (i - 0) * (portion - -portion) / (nMeridians - 0) + -portion;
+    float lat = (j - 0) * (HALF_PI - -HALF_PI) / (nParallels - 0) + -HALF_PI;
+    float x = r * sin(lon) * cos(lat)+ position.x;
+    float z = r * sin(lon) * sin(lat) + position.z;
+    float y = r * cos(lon) + position.y ;
+    return { x,y,z };
 }
 
-void MyDrawPolygonCylinder(Cylinder cylinder, int nSectors, bool drawCaps =
-    false, Color color = LIGHTGRAY) {
+//SPHERE
 
-    Vector3 pt1{ 0,cylinder.halfHeight,0 };
-    Vector3 pt2{ 0,cylinder.halfHeight,0 };
-    Vector3 pt3{ 0,cylinder.halfHeight,0 };
-    Vector3 pt4{ 0,-cylinder.halfHeight,0 };
-    Vector3 pt5{ 0,-cylinder.halfHeight,0 };
-    Vector3 pt6{ 0,-cylinder.halfHeight,0 };
-
-    float theta = 0;
-
-    for (int i = 0; i < nSectors; i++)
-    {
-        pt1.x = cylinder.radius * sin(theta);
-        pt1.z = cylinder.radius * cos(theta);
-
-        pt2.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
-        pt2.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
-        
-        
-        pt4.x = cylinder.radius * sin(theta);
-        pt4.z = cylinder.radius * cos(theta);
-
-        pt5.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
-        pt5.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
-
-        // FACADES
-        DrawTriangle3D(pt2, pt1, pt4, color);
-        DrawTriangle3D(pt4, pt5, pt2, color);
-        theta += (2 * PI) / nSectors;
-
-        if (drawCaps)
-        {
-            DrawTriangle3D(pt1, pt2, pt3, color);
-            DrawTriangle3D(pt5, pt4, pt6, color);
-        }
-    }
-}
-void MyDrawWireframeCylinder(Cylinder cylinder, int nSectors, bool drawCaps =
-    false, Color color = LIGHTGRAY)
+void MyDrawSphere(Sphere sphere, int nMeridians, int nParallels, bool
+    drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
+    Color wireframeColor = DARKGRAY)
 {
-
-    Vector3 pt1{ 0,cylinder.halfHeight,0 };
-    Vector3 pt2{ 0,cylinder.halfHeight,0 };
-    Vector3 pt3{ 0,cylinder.halfHeight,0 };
-    Vector3 pt4{ 0,-cylinder.halfHeight,0 };
-    Vector3 pt5{ 0,-cylinder.halfHeight,0 };
-    Vector3 pt6{ 0,-cylinder.halfHeight,0 };
-
-    float theta = 0;
-
-    for (int i = 0; i < nSectors; i++)
+    float r = sphere.radius;
+ 
+    for (int i = 1; i < nMeridians + 1; i++)
     {
-        pt1.x = cylinder.radius * sin(theta);
-        pt1.z = cylinder.radius * cos(theta);
-
-        pt2.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
-        pt2.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
-
-
-        pt4.x = cylinder.radius * sin(theta);
-        pt4.z = cylinder.radius * cos(theta);
-
-        pt5.x = cylinder.radius * sin(theta + (2 * PI) / nSectors);
-        pt5.z = cylinder.radius * cos(theta + (2 * PI) / nSectors);
-
-        // LIGNES
-        DrawLine3D(pt1, pt2, color);
-        DrawLine3D(pt4, pt5, color);
-        DrawLine3D(pt1, pt4, color);
-        DrawLine3D(pt2, pt5, color);
-        if (drawCaps)
+        for (int j = 1; j < nParallels + 1; j++)
         {
-            DrawLine3D(pt1, pt3, color);
-            DrawLine3D(pt2, pt3, color);
-            DrawLine3D(pt4, pt6, color);
-            DrawLine3D(pt5, pt6, color);
+            Vector3 p = { 0,0,0 }; // position de la sphere 
+            Vector3 p1 = Find_coo(i-1, nMeridians, j-1, nParallels, r, HALF_PI, p);
+            Vector3 p2 = Find_coo(i - 1, nMeridians, j, nParallels, r, HALF_PI, p);
+            Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, r, HALF_PI, p);
+            Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, r, HALF_PI, p);
+
+            if (drawPolygon)
+            {
+                DrawTriangle3D(p1, p2, p3, polygonColor);
+                DrawTriangle3D(p2, p1, p3, polygonColor);
+                DrawTriangle3D(p2, p4, p3, polygonColor);
+                DrawTriangle3D(p4, p2, p3, polygonColor);
+            }
+
+            if (drawWireframe)
+            {
+                DrawLine3D(p1, p2, wireframeColor);
+                DrawLine3D(p2, p3, wireframeColor);
+                DrawLine3D(p3, p4, wireframeColor);
+                DrawLine3D(p1, p3, wireframeColor);
+            }
+
         }
-        theta += (2 * PI) / nSectors;
     }
 }
+
+void MyDrawPolygonSphere(Sphere sphere, int nMeridians, int nParallels, Color color = LIGHTGRAY)
+{
+    MyDrawSphere(sphere, nMeridians, nParallels, true, false, color, DARKGRAY);
+}
+void MyDrawWireframeSphere(Sphere sphere, int nMeridians, int nParallels, Color color = DARKGRAY)
+{
+    MyDrawSphere(sphere, nMeridians, nParallels, false, true, DARKGRAY, color);
+}
+
+// CYLINDER
+
 void MyDrawCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, bool
     drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
     Color wireframeColor = DARKGRAY) {
@@ -319,4 +258,142 @@ void MyDrawCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, bool
         }
         theta += (2 * PI) / nSectors;
     }
+}
+
+void MyDrawPolygonCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, Color color = LIGHTGRAY)
+{
+    MyDrawCylinder(cylinder, nSectors, drawCaps, true, false, color, LIGHTGRAY);
+}
+
+void MyDrawWireframeCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, Color color = LIGHTGRAY)
+{
+    MyDrawCylinder(cylinder, nSectors, drawCaps, false, true, LIGHTGRAY, color);
+}
+
+
+// CAPSULE
+
+void MyDrawCapsule(Capsule capsule, int nSectors, int nParallels, bool
+    drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
+    Color wireframeColor = DARKGRAY)
+{
+    float r = capsule.radius;
+
+    Vector3 pt1{ 0,capsule.halfHeight,0 };
+    Vector3 pt2{ 0,capsule.halfHeight,0 };
+    Vector3 pt3{ 0,capsule.halfHeight,0 };
+    Vector3 pt4{ 0,-capsule.halfHeight,0 };
+    Vector3 pt5{ 0,-capsule.halfHeight,0 };
+    Vector3 pt6{ 0,-capsule.halfHeight,0 };
+
+    float theta = 0;
+
+    for (int i = 1; i < nSectors + 1; i++)
+    {
+        for (int j = 1; j < nParallels + 1; j++)
+        {
+            // Les deux demi spheres
+
+            Vector3 p = { 0,capsule.halfHeight,0 }; // position de la sphere 
+            Vector3 p1 = Find_coo(i - 1, nSectors, j - 1, nParallels, r, HALF_PI, p);
+            Vector3 p2 = Find_coo(i - 1, nSectors, j, nParallels, r, HALF_PI, p);
+            Vector3 p3 = Find_coo(i, nSectors, j - 1, nParallels, r, HALF_PI, p);
+            Vector3 p4 = Find_coo(i, nSectors, j, nParallels, r, HALF_PI, p);
+
+            if (drawPolygon)
+            {
+                DrawTriangle3D(p1, p2, p3, polygonColor);
+                DrawTriangle3D(p2, p1, p3, polygonColor);
+                DrawTriangle3D(p2, p4, p3, polygonColor);
+                DrawTriangle3D(p4, p2, p3, polygonColor);
+            }
+
+            if (drawWireframe)
+            {
+                DrawLine3D(p1, p2, wireframeColor);
+                DrawLine3D(p2, p3, wireframeColor);
+                DrawLine3D(p3, p4, wireframeColor);
+                DrawLine3D(p1, p3, wireframeColor);
+            }
+
+            p1.y = -p1.y;
+            p2.y = -p2.y;
+            p3.y = -p3.y;
+            p4.y = -p4.y;
+
+            if (drawPolygon)
+            {
+                DrawTriangle3D(p1, p2, p3, polygonColor);
+                DrawTriangle3D(p2, p1, p3, polygonColor);
+                DrawTriangle3D(p2, p4, p3, polygonColor);
+                DrawTriangle3D(p4, p2, p3, polygonColor);
+            }
+
+            if (drawWireframe)
+            {
+                DrawLine3D(p1, p2, wireframeColor);
+                DrawLine3D(p2, p3, wireframeColor);
+                DrawLine3D(p3, p4, wireframeColor);
+                DrawLine3D(p1, p3, wireframeColor);
+            }
+
+        }
+
+        // FACADES - LE CORPS DE LA CAPSULE
+
+        pt1.x = capsule.radius * sin(theta);
+        pt1.z = capsule.radius * cos(theta);
+
+        pt2.x = capsule.radius * sin(theta + (2 * PI) / nSectors);
+        pt2.z = capsule.radius * cos(theta + (2 * PI) / nSectors);
+
+
+        pt4.x = capsule.radius * sin(theta);
+        pt4.z = capsule.radius * cos(theta);
+
+        pt5.x = capsule.radius * sin(theta + (2 * PI) / nSectors);
+        pt5.z = capsule.radius * cos(theta + (2 * PI) / nSectors);
+
+        if (drawWireframe)
+        {
+            DrawLine3D(pt1, pt2, wireframeColor);
+            DrawLine3D(pt4, pt5, wireframeColor);
+            DrawLine3D(pt1, pt4, wireframeColor);
+            DrawLine3D(pt2, pt5, wireframeColor);
+        }
+
+        if (drawPolygon)
+        {
+            DrawTriangle3D(pt2, pt1, pt4, polygonColor);
+            DrawTriangle3D(pt4, pt5, pt2, polygonColor);
+        }
+        theta += (2 * PI) / nSectors;
+    }
+}
+
+void MyDrawPolygonCapsule(Capsule capsule, int nSectors, int nParallels, Color
+    color = LIGHTGRAY)
+{
+    MyDrawCapsule(capsule, nSectors, nParallels, true, false, color,
+        LIGHTGRAY);
+}
+
+void MyDrawWireframeCapsule(Capsule capsule, int nSectors, int nParallels, Color
+    color = LIGHTGRAY)
+{
+    MyDrawCapsule(capsule, nSectors, nParallels, false, true, LIGHTGRAY,
+        color);
+}
+
+void MyDrawPolygonRoundedBox(RoundedBox roundedBox, int nSectors, Color
+    color = LIGHTGRAY);
+
+void MyDrawWireframeRoundedBox(RoundedBox roundedBox, int nSectors, Color
+    color = LIGHTGRAY);
+
+void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
+    drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
+    Color wireframeColor = DARKGRAY)
+{
+
 }

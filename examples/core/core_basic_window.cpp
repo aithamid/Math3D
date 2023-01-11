@@ -96,20 +96,6 @@ Spherical CartesianToSpherical(Vector3 cart) {
 	return sph;
 }
 
-void DrawPartie3()
-{
-	// QUAD DISPLAY TEST
-	ReferenceFrame ref = ReferenceFrame(
-		{ 0,2,0 },
-		QuaternionFromAxisAngle(Vector3Normalize({ 1,1,1 }),
-		PI / 4));
-	Quad quad = { ref,{2.5,5,5} };
-	//MyDrawPolygonQuad(quad);
-
-	Sphere sphere = { ref,5 };
-
-	//MyDrawSphere(sphere, 2, RED);
-}
 
 Vector2 MyUpdateOrbitalCamera(Camera3D* Camera, Spherical* coordonnes, Vector2 prevMousePos)
 {	
@@ -236,19 +222,25 @@ int main(int argc, char* argv[])
 			DrawSphere({ 10,0,0 }, .2f, RED);
 			DrawSphere({ 0,10,0 }, .2f, GREEN);
 			DrawSphere({ 0,0,10 }, .2f, BLUE);
-			//DrawPartie1();
-			//DrawPartie2();
-			DrawPartie3();
+
 			ReferenceFrame ref = ReferenceFrame(
 				{ 0,2,0 },
 				QuaternionFromAxisAngle(Vector3Normalize({ 1,1,1 }),
 					PI / 4));
 			Disk disk = { ref,5 };
-
 			//MyDrawDisk(disk, 60, RED);
 
 			Cylinder cylinder = { ref,5,5 };
-			MyDrawCylinder(cylinder, 20, false, true, true, BLUE,BLACK);
+			//MyDrawPolygonCylinder(cylinder, 20, true, BLUE);
+
+			Sphere sphere = { ref,5 };
+			//MyDrawSphere(sphere, 20, 20);
+
+			Capsule capsule = { ref,3,2 };
+			//MyDrawPolygonCapsule(capsule, 20, 10, BLUE);
+
+			RoundedBox roundedBox = { ref,{5,3,4},2};
+			MyDrawRoundedBox(roundedBox, 20, true, true);
 		}
 		EndMode3D();
 
