@@ -659,7 +659,27 @@ void MyDrawPolygonRoundedBox(RoundedBox roundedBox, int nSectors, Color
 void MyDrawWireframeRoundedBox(RoundedBox roundedBox, int nSectors, Color
     color = LIGHTGRAY)
 {
+    // Draw top sphere
+    ReferenceFrame topRef = {
+        Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.j,roundedBox.radius)),
+        QuaternionMultiply(roundedBox.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,-1 }), PI / 2))
+    };
+    Sphere topSphere = { topRef, roundedBox.radius };
+    MyDrawWireframePortionSphere(topSphere, nSectors, nSectors, color);
 
+    // Draw cylinder
+    Cylinder cylinder = { roundedBox.ref, roundedBox.radius, roundedBox.radius };
+    MyDrawWireframeCylinder(cylinder, nSectors, false, color);
+
+    // Draw bottom sphere
+    ReferenceFrame bottomRef = {
+        Vector3Subtract(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.j,roundedBox.radius)),
+        QuaternionMultiply(roundedBox.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,1 }), PI / 2))
+    };
+    Sphere bottomSphere = { bottomRef, roundedBox.radius };
+    MyDrawWireframePortionSphere(bottomSphere, nSectors, nSectors, color);
 }
 
 void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool

@@ -242,9 +242,9 @@ int main(int argc, char* argv[])
 			//MyDrawSphere(sphere, 10, 10);
 
 			ref = ReferenceFrame(
-				{ 5,5,5 },
+				{ 0,0,0 },
 				QuaternionFromAxisAngle(
-					Vector3Normalize({ 0,1,0.5 }),
+					Vector3Normalize({ 0,0,0 }),
 					PI));
 			Capsule capsule = { ref,3,2 };
 			//MyDrawCapsule(capsule, 20, 15, true, true, RED, YELLOW);
