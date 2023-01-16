@@ -248,12 +248,12 @@ int main(int argc, char* argv[])
 				{ 0,0,0 },
 				QuaternionFromAxisAngle(
 					Vector3Normalize({ 0,0,0 }),
-					PI/4));
+					0));
 			Capsule capsule = { ref,3,2 };
-			//MyDrawCapsule(capsule, 20, 15, true, true, RED, YELLOW);
+			//MyDrawCapsule(capsule, 20, 15, false, true, RED, DARKGRAY);
 
 			RoundedBox roundedBox = { ref,{5,3,4},2 };
-			MyDrawWireframeRoundedBox(roundedBox, 20);
+			MyDrawRoundedBox(roundedBox, 20);
 
 			Box box = { ref,{3,2,5} };
 			//MyDrawBox(box,true,true,PURPLE, DARKPURPLE);
