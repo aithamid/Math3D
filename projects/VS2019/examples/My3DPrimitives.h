@@ -722,18 +722,7 @@ void MyDrawWireframeCapsule(Capsule capsule, int nSectors, int nParallels, Color
     MyDrawCapsule(capsule, nSectors, nParallels, false, true, LIGHTGRAY, color);
 }
 
-
-void MyDrawPolygonRoundedBox(RoundedBox roundedBox, int nSectors, Color
-    color = LIGHTGRAY)
-{
-
-}
-
-void MyDrawWireframeRoundedBox(RoundedBox roundedBox, int nSectors, Color
-    color = LIGHTGRAY)
-{
-
-}
+// CAPSULE
 
 void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
     drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
@@ -747,7 +736,7 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
                     Vector3Normalize({ 0,0,-1 }), PI / 2))
     };
     Quad qright = { right, {size.y,size.x,size.z} };
-    MyDrawQuad(qright);
+    MyDrawQuad(qright, drawPolygon, drawWireframe, polygonColor, wireframeColor);
 
     ReferenceFrame left = {
         Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.i,-(roundedBox.extents.x + roundedBox.radius))),
@@ -755,7 +744,7 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
                     Vector3Normalize({ 0,0,1 }), PI / 2))
     };
     Quad qleft = { left, {size.y,size.x,size.z} };
-    MyDrawQuad(qleft);
+    MyDrawQuad(qleft, drawPolygon, drawWireframe, polygonColor, wireframeColor);
 
     ReferenceFrame top = {
         Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.j,roundedBox.extents.y + roundedBox.radius)),
@@ -763,7 +752,7 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
                     Vector3Normalize({ 0,0,0 }), PI / 2))
     };
     Quad qtop = { top, {size.x,size.y,size.z} };
-    MyDrawQuad(qtop);
+    MyDrawQuad(qtop, drawPolygon, drawWireframe, polygonColor, wireframeColor);
 
     ReferenceFrame bottom = {
         Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.j,-(roundedBox.extents.y + roundedBox.radius))),
@@ -771,7 +760,7 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
                     Vector3Normalize({ 0,0,1 }), PI))
     };
     Quad qbottom = { bottom, {size.x,size.y,size.z} };
-    MyDrawQuad(qbottom);
+    MyDrawQuad(qbottom, drawPolygon, drawWireframe, polygonColor, wireframeColor);
 
     ReferenceFrame front = {
         Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.k,-(roundedBox.extents.z + roundedBox.radius))),
@@ -779,7 +768,7 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
                     Vector3Normalize({ -1,0,0 }), PI / 2))
     };
     Quad qfront = { front, {size.x,size.z,size.y} };
-    MyDrawQuad(qfront);
+    MyDrawQuad(qfront, drawPolygon, drawWireframe, polygonColor, wireframeColor);
 
     ReferenceFrame rear = {
         Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.k,roundedBox.extents.z + roundedBox.radius)),
@@ -787,7 +776,7 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
                     Vector3Normalize({ 1,0,0 }), PI / 2))
     };
     Quad qrear = { rear, {size.x,size.z,size.y} };
-    MyDrawQuad(qrear);
+    MyDrawQuad(qrear, drawPolygon, drawWireframe, polygonColor, wireframeColor);
 
     // END QUADS
 
@@ -902,4 +891,17 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
         Sphere sphere = { sphereref,roundedBox.radius };
         MyDrawPortionSphere(sphere, nSectors, nSectors, drawPolygon, drawWireframe, polygonColor, wireframeColor, 4);
     }
+}
+
+void MyDrawPolygonRoundedBox(RoundedBox roundedBox, int nSectors, Color
+    color = LIGHTGRAY)
+{
+    MyDrawRoundedBox(roundedBox, nSectors, true, false, LIGHTGRAY, color);
+}
+
+void MyDrawWireframeRoundedBox(RoundedBox roundedBox, int nSectors, Color
+    color = LIGHTGRAY)
+{
+    MyDrawRoundedBox(roundedBox, nSectors, false, true, color,
+        LIGHTGRAY);
 }

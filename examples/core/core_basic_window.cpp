@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
 			//MyDrawCapsule(capsule, 20, 15, false, true, RED, DARKGRAY);
 
 			RoundedBox roundedBox = { ref,{5,3,4},2 };
-			MyDrawRoundedBox(roundedBox, 20);
+			MyDrawRoundedBox(roundedBox, 20, true, true, GREEN, DARKGREEN);
 
 			Box box = { ref,{3,2,5} };
 			//MyDrawBox(box,true,true,PURPLE, DARKPURPLE);
