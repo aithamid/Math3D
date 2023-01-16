@@ -224,27 +224,33 @@ int main(int argc, char* argv[])
 			DrawSphere({ 0,0,10 }, .2f, BLUE);
 
 			ReferenceFrame ref = ReferenceFrame(
-				{ 2,3,3 },
+				{ 4,5,5 },
 				QuaternionFromAxisAngle(
-					Vector3Normalize({ 0,0,0 }),
-					PI));
+					Vector3Normalize({ 0,0,1 }),
+					PI/4));
 
 			Quad quad = { ref,{3,0,4}};
 			//MyDrawQuad(quad);
+			//MyTest(quad);
 			Disk disk = { ref,5 };
 			//MyDrawDisk(disk, 32);
 
-			Cylinder cylinder = { ref,2.5, 2};
-			MyDrawCylinder(cylinder, 20,true);
+			Cylinder cylinder = { ref,3, 2};
+			//MyDrawCylinder(cylinder, 20,false);
 
 			Sphere sphere = { ref,5 };
-			//MyDrawSphere(sphere, 20, 20);
+			//MyDrawSphere(sphere, 10, 10);
 
+			ref = ReferenceFrame(
+				{ 5,5,5 },
+				QuaternionFromAxisAngle(
+					Vector3Normalize({ 0,1,0.5 }),
+					PI));
 			Capsule capsule = { ref,3,2 };
-			//MyDrawCapsule(capsule, 20, 10);
+			//MyDrawCapsule(capsule, 20, 15, true, true, RED, YELLOW);
 
 			RoundedBox roundedBox = { ref,{5,3,4},2 };
-			//MyDrawRoundedBox(roundedBox, 20, true, true);
+			MyDrawRoundedBox(roundedBox, 20, true, true);
 		}
 		EndMode3D();
 

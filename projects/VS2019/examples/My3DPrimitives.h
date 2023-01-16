@@ -250,49 +250,236 @@ Vector3 Find_coo(int i,int nMeridians, int j, int nParallels, float r, float por
 
 //SPHERE
 
-void MyDrawSphere(Sphere sphere, int nMeridians, int nParallels, bool
-    drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
-    Color wireframeColor = DARKGRAY)
+void MyDrawPolygonSphere(Sphere sphere, int nMeridians, int nParallels, Color color = LIGHTGRAY)
 {
-    float r = sphere.radius;
- 
+    nMeridians = nMeridians * 2;
+    nParallels = nParallels / 2;
+    float theta = 0;
+
+    int numVertex = nMeridians* nParallels * 12;
+    if (rlCheckBufferLimit(numVertex)) rlglDraw();
+    rlPushMatrix();
+    rlTranslatef(sphere.ref.origin.x, sphere.ref.origin.y, sphere.ref.origin.z);
+    Vector3 vect;
+    float angle;
+    QuaternionToAxisAngle(sphere.ref.q, &vect, &angle);
+    rlRotatef(angle * RAD2DEG, vect.x, vect.y, vect.z);
+    rlScalef(sphere.radius, sphere.radius, sphere.radius);
+
+    rlBegin(RL_TRIANGLES);
+
+    rlColor4ub(color.r, color.g, color.b, color.a);
+
     for (int i = 1; i < nMeridians + 1; i++)
     {
         for (int j = 1; j < nParallels + 1; j++)
         {
-            Vector3 p = { 0,0,0 }; // position de la sphere 
-            Vector3 p1 = Find_coo(i-1, nMeridians, j-1, nParallels, r);
-            Vector3 p2 = Find_coo(i - 1, nMeridians, j, nParallels, r);
-            Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, r);
-            Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, r);
+            Vector3 p1 = Find_coo(i - 1, nMeridians, j - 1, nParallels, 1);
+            Vector3 p2 = Find_coo(i - 1, nMeridians, j, nParallels, 1);
+            Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, 1);
+            Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, 1);
 
-            if (drawPolygon)
-            {
-                DrawTriangle3D(p1, p2, p3, polygonColor);
-                DrawTriangle3D(p2, p1, p3, polygonColor);
-                DrawTriangle3D(p2, p4, p3, polygonColor);
-                DrawTriangle3D(p4, p2, p3, polygonColor);
-            }
+                
 
-            if (drawWireframe)
-            {
-                DrawLine3D(p1, p2, wireframeColor);
-                DrawLine3D(p2, p3, wireframeColor);
-                DrawLine3D(p3, p4, wireframeColor);
-                DrawLine3D(p1, p3, wireframeColor);
-            }
+                rlVertex3f(p1.x,p1.y,p1.z);
+                rlVertex3f(p2.x,p2.y,p2.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
+
+                rlVertex3f(p2.x, p2.y, p2.z);
+                rlVertex3f(p1.x, p1.y, p1.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
+
+                rlVertex3f(p4.x, p4.y, p4.z);
+                rlVertex3f(p2.x, p2.y, p2.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
+
+                rlVertex3f(p2.x, p2.y, p2.z);
+                rlVertex3f(p4.x, p4.y, p4.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
 
         }
     }
-}
-
-void MyDrawPolygonSphere(Sphere sphere, int nMeridians, int nParallels, Color color = LIGHTGRAY)
-{
-    MyDrawSphere(sphere, nMeridians, nParallels, true, false, color, DARKGRAY);
+    rlEnd();
+    rlPopMatrix();
 }
 void MyDrawWireframeSphere(Sphere sphere, int nMeridians, int nParallels, Color color = DARKGRAY)
 {
-    MyDrawSphere(sphere, nMeridians, nParallels, false, true, DARKGRAY, color);
+    nMeridians = nMeridians * 2;
+    nParallels = nParallels / 2;
+    float theta = 0;
+
+    for (int i = 1; i < nMeridians + 1; i++)
+    {
+        for (int j = 1; j < nParallels + 1; j++)
+        {
+            Vector3 p = { 0,0,0 };  //position de la sphere
+            Vector3 p1 = Find_coo(i - 1, nMeridians, j - 1, nParallels, 1);
+            Vector3 p2 = Find_coo(i - 1, nMeridians, j, nParallels, 1);
+            Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, 1);
+            Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, 1);
+
+            int numVertex = 8;
+            if (rlCheckBufferLimit(numVertex)) rlglDraw();
+            rlPushMatrix();
+            rlTranslatef(sphere.ref.origin.x, sphere.ref.origin.y, sphere.ref.origin.z);
+            Vector3 vect;
+            float angle;
+            QuaternionToAxisAngle(sphere.ref.q, &vect, &angle);
+            rlRotatef(angle * RAD2DEG, vect.x, vect.y, vect.z);
+            rlScalef(sphere.radius, sphere.radius, sphere.radius);
+
+            rlBegin(RL_LINES);
+
+            rlColor4ub(color.r, color.g, color.b, color.a);
+
+            // DIAGONALE
+            rlVertex3f(p2.x, p2.y, p2.z);
+            rlVertex3f(p3.x, p3.y, p3.z);
+
+            // --
+            rlVertex3f(p1.x, p1.y, p1.z);
+            rlVertex3f(p2.x, p2.y, p2.z);
+
+            rlVertex3f(p3.x, p3.y, p3.z);
+            rlVertex3f(p4.x, p4.y, p4.z);
+
+            // |
+            rlVertex3f(p1.x, p1.y, p1.z);
+            rlVertex3f(p3.x, p3.y, p3.z);
+
+            rlVertex3f(p2.x, p2.y, p2.z);
+            rlVertex3f(p4.x, p4.y, p4.z);
+            
+            rlEnd();
+            rlPopMatrix();
+
+        }
+    }
+    
+}
+
+void MyDrawSphere(Sphere sphere, int nMeridians, int nParallels, bool
+    drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
+    Color wireframeColor = DARKGRAY)
+{
+    if (drawPolygon)MyDrawPolygonSphere(sphere, nMeridians, nParallels, polygonColor);
+    if (drawWireframe)MyDrawWireframeSphere(sphere, nMeridians, nParallels, wireframeColor);
+}
+
+// DEMI SPHERE
+
+void MyDrawPolygonPortionSphere(Sphere sphere, int nMeridians, int nParallels, Color color = LIGHTGRAY)
+{
+    float theta = 0;
+
+    int numVertex = nMeridians * nParallels * 12;
+    if (rlCheckBufferLimit(numVertex)) rlglDraw();
+    rlPushMatrix();
+    rlTranslatef(sphere.ref.origin.x, sphere.ref.origin.y, sphere.ref.origin.z);
+    Vector3 vect;
+    float angle;
+    QuaternionToAxisAngle(sphere.ref.q, &vect, &angle);
+    rlRotatef(angle * RAD2DEG, vect.x, vect.y, vect.z);
+    rlScalef(sphere.radius, sphere.radius, sphere.radius);
+
+    rlBegin(RL_TRIANGLES);
+
+    rlColor4ub(color.r, color.g, color.b, color.a);
+
+    for (int i = 1; i < nMeridians + 1; i++)
+    {
+        for (int j = 1; j < nParallels + 1; j++)
+        {
+            Vector3 p1 = Find_coo(i - 1, nMeridians, j - 1, nParallels, 1);
+            Vector3 p2 = Find_coo(i - 1, nMeridians, j, nParallels, 1);
+            Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, 1);
+            Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, 1);
+
+
+
+            rlVertex3f(p1.x, p1.y, p1.z);
+            rlVertex3f(p2.x, p2.y, p2.z);
+            rlVertex3f(p3.x, p3.y, p3.z);
+
+            rlVertex3f(p2.x, p2.y, p2.z);
+            rlVertex3f(p1.x, p1.y, p1.z);
+            rlVertex3f(p3.x, p3.y, p3.z);
+
+            rlVertex3f(p4.x, p4.y, p4.z);
+            rlVertex3f(p2.x, p2.y, p2.z);
+            rlVertex3f(p3.x, p3.y, p3.z);
+
+            rlVertex3f(p2.x, p2.y, p2.z);
+            rlVertex3f(p4.x, p4.y, p4.z);
+            rlVertex3f(p3.x, p3.y, p3.z);
+
+
+
+        }
+    }
+    rlEnd();
+    rlPopMatrix();
+}
+void MyDrawWireframePortionSphere(Sphere sphere, int nMeridians, int nParallels, Color color = DARKGRAY)
+{
+    float theta = 0;
+
+    for (int i = 1; i < nMeridians/2 + 1; i++)
+    {
+        for (int j = 1; j < nParallels + 1; j++)
+        {
+            Vector3 p = { 0,0,0 };  //position de la sphere
+            Vector3 p1 = Find_coo(i - 1, nMeridians, j - 1, nParallels, 1);
+            Vector3 p2 = Find_coo(i - 1, nMeridians, j, nParallels, 1);
+            Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, 1);
+            Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, 1);
+
+            int numVertex = 8;
+            if (rlCheckBufferLimit(numVertex)) rlglDraw();
+            rlPushMatrix();
+            rlTranslatef(sphere.ref.origin.x, sphere.ref.origin.y, sphere.ref.origin.z);
+            Vector3 vect;
+            float angle;
+            QuaternionToAxisAngle(sphere.ref.q, &vect, &angle);
+            rlRotatef(angle * RAD2DEG, vect.x, vect.y, vect.z);
+            rlScalef(sphere.radius, sphere.radius, sphere.radius);
+
+            rlBegin(RL_LINES);
+
+            rlColor4ub(color.r, color.g, color.b, color.a);
+
+            // DIAGONALE
+            rlVertex3f(p2.x, p2.y, p2.z);
+            rlVertex3f(p3.x, p3.y, p3.z);
+
+            // --
+            rlVertex3f(p1.x, p1.y, p1.z);
+            rlVertex3f(p2.x, p2.y, p2.z);
+
+            rlVertex3f(p3.x, p3.y, p3.z);
+            rlVertex3f(p4.x, p4.y, p4.z);
+
+            // |
+            rlVertex3f(p1.x, p1.y, p1.z);
+            rlVertex3f(p3.x, p3.y, p3.z);
+
+            rlVertex3f(p2.x, p2.y, p2.z);
+            rlVertex3f(p4.x, p4.y, p4.z);
+
+            rlEnd();
+            rlPopMatrix();
+
+        }
+    }
+
+}
+
+void MyDrawPortionSphere(Sphere sphere, int nMeridians, int nParallels, bool
+    drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
+    Color wireframeColor = DARKGRAY)
+{
+    if (drawPolygon)MyDrawPolygonPortionSphere(sphere, nMeridians, nParallels, polygonColor);
+    if (drawWireframe)MyDrawWireframePortionSphere(sphere, nMeridians, nParallels, wireframeColor);
 }
 
 // CYLINDER
@@ -315,18 +502,20 @@ void MyDrawPolygonCylinder(Cylinder cylinder, int nSectors, bool drawCaps = fals
         rlRotatef(angle * RAD2DEG, vect.x, vect.y, vect.z);
         rlScalef(cylinder.radius, cylinder.halfHeight, cylinder.radius);
 
-        rlBegin(RL_TRIANGLES);
-        rlColor4ub(color.r, color.g, color.b, color.a);
-        rlVertex3f(0, 1, 0);
-        rlVertex3f(sin(theta), 1, cos(theta));
-        rlVertex3f(sin(theta + (2 * PI) / nSectors), 1, cos(theta + (2 * PI) / nSectors));
-        
-        rlVertex3f(sin(theta), -1, cos(theta));
-        rlVertex3f(0, -1, 0);
-        rlVertex3f(sin(theta + (2 * PI) / nSectors), -1, cos(theta + (2 * PI) / nSectors));
+        if (drawCaps)
+        {
+            rlBegin(RL_TRIANGLES);
+            rlColor4ub(color.r, color.g, color.b, color.a);
+            rlVertex3f(0, 1, 0);
+            rlVertex3f(sin(theta), 1, cos(theta));
+            rlVertex3f(sin(theta + (2 * PI) / nSectors), 1, cos(theta + (2 * PI) / nSectors));
 
-        rlEnd();
+            rlVertex3f(sin(theta), -1, cos(theta));
+            rlVertex3f(0, -1, 0);
+            rlVertex3f(sin(theta + (2 * PI) / nSectors), -1, cos(theta + (2 * PI) / nSectors));
 
+            rlEnd();
+        }
         rlBegin(RL_TRIANGLES);
         rlColor4ub(color.r, color.g, color.b, color.a);
         rlVertex3f(sin(theta), 1, cos(theta));
@@ -364,13 +553,21 @@ void MyDrawWireframeCylinder(Cylinder cylinder, int nSectors, bool drawCaps = fa
 
         rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlVertex3f(0, 1, 0);
-        rlVertex3f(sin(theta), 1, cos(theta));
+
+        if (drawCaps)
+        {
+            rlVertex3f(0, 1, 0);
+            rlVertex3f(sin(theta), 1, cos(theta));
+
+            rlVertex3f(0, -1, 0);
+            rlVertex3f(sin(theta), -1, cos(theta));
+        }
+
         rlVertex3f(sin(theta), 1, cos(theta));
         rlVertex3f(sin(theta + (2 * PI) / nSectors), 1, cos(theta + (2 * PI) / nSectors));
 
-        rlVertex3f(0, -1, 0);
-        rlVertex3f(sin(theta), -1, cos(theta));
+        
+
         rlVertex3f(sin(theta), -1, cos(theta));
         rlVertex3f(sin(theta + (2 * PI) / nSectors), -1, cos(theta + (2 * PI) / nSectors));
 
@@ -387,233 +584,88 @@ void MyDrawWireframeCylinder(Cylinder cylinder, int nSectors, bool drawCaps = fa
 void MyDrawCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, bool
     drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
     Color wireframeColor = DARKGRAY) {
-    if (drawPolygon) MyDrawPolygonCylinder(cylinder, nSectors, true, polygonColor);
-    if (drawWireframe)MyDrawWireframeCylinder(cylinder, nSectors, true, wireframeColor);
+    if (drawPolygon) MyDrawPolygonCylinder(cylinder, nSectors, drawCaps, polygonColor);
+    if (drawWireframe)MyDrawWireframeCylinder(cylinder, nSectors, drawCaps, wireframeColor);
 
 }
 
-// CAPSULE
+// CAPSULE ----------------
+
+void MyDrawPolygonCapsule(Capsule capsule, int nSectors, int nParallels, Color
+    color = LIGHTGRAY)
+{
+    // Draw top sphere
+    ReferenceFrame topRef = {
+        Vector3Add(capsule.ref.origin,Vector3Scale(capsule.ref.j,capsule.halfHeight)),
+        QuaternionMultiply(capsule.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,-1 }), PI / 2))
+    };
+    Sphere topSphere = { topRef, capsule.radius };
+    MyDrawPolygonPortionSphere(topSphere, nSectors, nParallels, color);
+
+    // Draw cylinder
+    Cylinder cylinder = { capsule.ref, capsule.halfHeight, capsule.radius };
+    MyDrawPolygonCylinder(cylinder, nSectors, false, color);
+
+    // Draw bottom sphere
+    ReferenceFrame bottomRef = {
+        Vector3Subtract(capsule.ref.origin,Vector3Scale(capsule.ref.j,capsule.halfHeight)),
+        QuaternionMultiply(capsule.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,1 }), PI / 2))
+    };
+    Sphere bottomSphere = { bottomRef, capsule.radius };
+    MyDrawPolygonPortionSphere(bottomSphere, nSectors, nParallels, color);
+}
+
+void MyDrawWireframeCapsule(Capsule capsule, int nSectors, int nParallels, Color color = DARKGRAY)
+{
+    // Draw top sphere
+    ReferenceFrame topRef = {
+        Vector3Add(capsule.ref.origin,Vector3Scale(capsule.ref.j,capsule.halfHeight)),
+        QuaternionMultiply(capsule.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,-1 }), PI / 2))
+    };
+    Sphere topSphere = { topRef, capsule.radius };
+    MyDrawWireframePortionSphere(topSphere, nSectors, nParallels, color);
+
+    // Draw cylinder
+    Cylinder cylinder = { capsule.ref, capsule.halfHeight, capsule.radius };
+    MyDrawWireframeCylinder(cylinder, nSectors, false, color);
+
+    // Draw bottom sphere
+    ReferenceFrame bottomRef = {
+        Vector3Subtract(capsule.ref.origin,Vector3Scale(capsule.ref.j,capsule.halfHeight)),
+        QuaternionMultiply(capsule.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,1 }), PI / 2))
+    };
+    Sphere bottomSphere = { bottomRef, capsule.radius };
+    MyDrawWireframePortionSphere(bottomSphere, nSectors, nParallels, color);
+}
 
 void MyDrawCapsule(Capsule capsule, int nSectors, int nParallels, bool
     drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
     Color wireframeColor = DARKGRAY)
 {
-    float r = capsule.radius;
-
-
-    float theta = 0;
-
-    for (int i = 1; i < nSectors + 1; i++)
-    {
-        for (int j = 1; j < nParallels + 1; j++)
-        {
-            // Les deux demi spheres
-
-            Vector3 p = { 0,capsule.halfHeight,0 }; // position de la sphere 
-            Vector3 p1 = Find_coo(i - 1, nSectors, j - 1, nParallels, r, HALF_PI, p);
-            Vector3 p2 = Find_coo(i - 1, nSectors, j, nParallels, r, HALF_PI, p);
-            Vector3 p3 = Find_coo(i, nSectors, j - 1, nParallels, r, HALF_PI, p);
-            Vector3 p4 = Find_coo(i, nSectors, j, nParallels, r, HALF_PI, p);
-
-            p1 = Vector3Add(capsule.ref.origin, p1);
-            p2 = Vector3Add(capsule.ref.origin, p2);
-            p3 = Vector3Add(capsule.ref.origin, p3);
-            p4 = Vector3Add(capsule.ref.origin, p4);
-
-            p1 = Vector3RotateByQuaternion(p1, capsule.ref.q);
-            p2 = Vector3RotateByQuaternion(p2, capsule.ref.q);
-            p3 = Vector3RotateByQuaternion(p3, capsule.ref.q);
-            p4 = Vector3RotateByQuaternion(p4, capsule.ref.q);
-
-            if (drawPolygon)
-            {
-                DrawTriangle3D(p1, p2, p3, polygonColor);
-                DrawTriangle3D(p2, p1, p3, polygonColor);
-                DrawTriangle3D(p2, p4, p3, polygonColor);
-                DrawTriangle3D(p4, p2, p3, polygonColor);
-            }
-
-            if (drawWireframe)
-            {
-                DrawLine3D(p1, p2, wireframeColor);
-                DrawLine3D(p2, p3, wireframeColor);
-                DrawLine3D(p3, p4, wireframeColor);
-                DrawLine3D(p1, p3, wireframeColor);
-            }
-        }
-
-        for (int j = 1; j < nParallels + 1; j++)
-        {
-            // Les deux demi spheres
-
-            Vector3 p = { 0,capsule.halfHeight,0 }; // position de la sphere 
-            Vector3 p1 = Find_coo(i - 1, nSectors, j - 1, nParallels, r, HALF_PI, p);
-            Vector3 p2 = Find_coo(i - 1, nSectors, j, nParallels, r, HALF_PI, p);
-            Vector3 p3 = Find_coo(i, nSectors, j - 1, nParallels, r, HALF_PI, p);
-            Vector3 p4 = Find_coo(i, nSectors, j, nParallels, r, HALF_PI, p);
-
-            p1.y = -p1.y;
-            p2.y = -p2.y;
-            p3.y = -p3.y;
-            p4.y = -p4.y;
-
-            p1 = Vector3Add(capsule.ref.origin, p1);
-            p2 = Vector3Add(capsule.ref.origin, p2);
-            p3 = Vector3Add(capsule.ref.origin, p3);
-            p4 = Vector3Add(capsule.ref.origin, p4);
-
-            p1 = Vector3RotateByQuaternion(p1, capsule.ref.q);
-            p2 = Vector3RotateByQuaternion(p2, capsule.ref.q);
-            p3 = Vector3RotateByQuaternion(p3, capsule.ref.q);
-            p4 = Vector3RotateByQuaternion(p4, capsule.ref.q);
-
-            if (drawPolygon)
-            {
-                DrawTriangle3D(p1, p2, p3, polygonColor);
-                DrawTriangle3D(p2, p1, p3, polygonColor);
-                DrawTriangle3D(p2, p4, p3, polygonColor);
-                DrawTriangle3D(p4, p2, p3, polygonColor);
-            }
-
-            if (drawWireframe)
-            {
-                DrawLine3D(p1, p2, wireframeColor);
-                DrawLine3D(p2, p3, wireframeColor);
-                DrawLine3D(p3, p4, wireframeColor);
-                DrawLine3D(p1, p3, wireframeColor);
-            }
-        }
-
-        Vector3 pt1{ capsule.radius * sin(theta),capsule.halfHeight,capsule.radius * cos(theta) };
-        Vector3 pt2{ capsule.radius * sin(theta + (2 * PI) / nSectors),capsule.halfHeight,capsule.radius * cos(theta + (2 * PI) / nSectors) };
-        Vector3 pt3{ 0,capsule.halfHeight,0 };
-        Vector3 pt4{ capsule.radius * sin(theta),-capsule.halfHeight,capsule.radius * cos(theta) };
-        Vector3 pt5{ capsule.radius * sin(theta + (2 * PI) / nSectors),-capsule.halfHeight, capsule.radius * cos(theta + (2 * PI) / nSectors) };
-        Vector3 pt6{ 0,-capsule.halfHeight,0 };
-
-
-        // FACADES - LE CORPS DE LA CAPSULE
-
-        /*pt1.x = capsule.radius * sin(theta);
-        pt1.z = capsule.radius * cos(theta);
-
-        pt2.x = capsule.radius * sin(theta + (2 * PI) / nSectors);
-        pt2.z = capsule.radius * cos(theta + (2 * PI) / nSectors);
-
-
-        pt4.x = capsule.radius * sin(theta);
-        pt4.z = capsule.radius * cos(theta);
-
-        pt5.x = capsule.radius * sin(theta + (2 * PI) / nSectors);
-        pt5.z = capsule.radius * cos(theta + (2 * PI) / nSectors);*/
-
-        pt1 = Vector3Add(capsule.ref.origin, pt1);
-        pt2 = Vector3Add(capsule.ref.origin, pt2);
-        pt3 = Vector3Add(capsule.ref.origin, pt3);
-        pt4 = Vector3Add(capsule.ref.origin, pt4);
-        pt5 = Vector3Add(capsule.ref.origin, pt5);
-        pt6 = Vector3Add(capsule.ref.origin, pt6);
-
-        pt1 = Vector3RotateByQuaternion(pt1, capsule.ref.q);
-        pt2 = Vector3RotateByQuaternion(pt2, capsule.ref.q);
-        pt3 = Vector3RotateByQuaternion(pt3, capsule.ref.q);
-        pt4 = Vector3RotateByQuaternion(pt4, capsule.ref.q);
-        pt5 = Vector3RotateByQuaternion(pt5, capsule.ref.q);
-        pt6 = Vector3RotateByQuaternion(pt6, capsule.ref.q);
-
-        if (drawWireframe)
-        {
-            DrawLine3D(pt1, pt2, wireframeColor);
-            DrawLine3D(pt4, pt5, wireframeColor);
-            DrawLine3D(pt1, pt4, wireframeColor);
-            DrawLine3D(pt2, pt5, wireframeColor);
-        }
-
-        if (drawPolygon)
-        {
-            DrawTriangle3D(pt2, pt1, pt4, polygonColor);
-            DrawTriangle3D(pt4, pt5, pt2, polygonColor);
-        }
-        theta += (2 * PI) / nSectors;
-    }
-}
-
-void MyDrawPolygonCapsule(Capsule capsule, int nSectors, int nParallels, Color
-    color = LIGHTGRAY)
-{
-    MyDrawCapsule(capsule, nSectors, nParallels, true, false, color,
-        LIGHTGRAY);
-}
-
-void MyDrawWireframeCapsule(Capsule capsule, int nSectors, int nParallels, Color
-    color = LIGHTGRAY)
-{
-    MyDrawCapsule(capsule, nSectors, nParallels, false, true, LIGHTGRAY,
-        color);
+    if (drawPolygon) MyDrawPolygonCapsule(capsule, nSectors, nParallels, polygonColor);
+    if (drawWireframe)MyDrawWireframeCapsule(capsule, nSectors, nParallels, wireframeColor);
 }
 
 void MyDrawPolygonRoundedBox(RoundedBox roundedBox, int nSectors, Color
-    color = LIGHTGRAY);
+    color = LIGHTGRAY)
+{
+
+}
 
 void MyDrawWireframeRoundedBox(RoundedBox roundedBox, int nSectors, Color
-    color = LIGHTGRAY);
+    color = LIGHTGRAY)
+{
+
+}
 
 void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
     drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
     Color wireframeColor = DARKGRAY)
 {
-    float r = roundedBox.radius;
-
-    for (int i = 1; i < nSectors/2 + 1; i++)
-    {
-        for (int j = 1; j < nSectors/2 + 1; j++)
-        {
-            Vector3 p = { 0,0,0 }; // position de la sphere 
-            Vector3 p1 = Find_coo(i - 1, nSectors, j - 1, nSectors, r, HALF_PI, p);
-            Vector3 p2 = Find_coo(i - 1, nSectors, j, nSectors, r, HALF_PI, p);
-            Vector3 p3 = Find_coo(i, nSectors, j - 1, nSectors, r, HALF_PI, p);
-            Vector3 p4 = Find_coo(i, nSectors, j, nSectors, r, HALF_PI, p);
-
-            if (drawPolygon)
-            {
-                DrawTriangle3D(p1, p2, p3, polygonColor);
-                DrawTriangle3D(p2, p1, p3, polygonColor);
-                DrawTriangle3D(p2, p4, p3, polygonColor);
-                DrawTriangle3D(p4, p2, p3, polygonColor);
-            }
-
-            if (drawWireframe)
-            {
-                DrawLine3D(p1, p2, wireframeColor);
-                DrawLine3D(p2, p3, wireframeColor);
-                DrawLine3D(p3, p4, wireframeColor);
-                DrawLine3D(p1, p3, wireframeColor);
-            }
-
-        }
-    }
-
-    //roundedBox.ref
-}
-
-void MyTest(Quad quad, Color color = LIGHTGRAY)
-{
-    float x = quad.extents.x;
-    float z = quad.extents.z;
-
-    Vector3 pt1, pt2, pt3, pt4;
-    pt1 = Vector3Add(quad.ref.origin, { x,0,z});
-    pt2 = Vector3Add(quad.ref.origin, { x,0,-z});
-    pt3 = Vector3Add(quad.ref.origin, { -x,0,z});
-    pt4 = Vector3Add(quad.ref.origin, { -x,0,-z });
-
-    pt1 = Vector3RotateByQuaternion(pt1, quad.ref.q);
-    pt2 = Vector3RotateByQuaternion(pt2, quad.ref.q);
-    pt3 = Vector3RotateByQuaternion(pt3, quad.ref.q);
-    pt4 = Vector3RotateByQuaternion(pt4, quad.ref.q);
-
-    DrawTriangle3D(pt1, pt2, pt3, RED);
-    DrawTriangle3D(pt2, pt1, pt3, RED);
-    DrawTriangle3D(pt3, pt2, pt4, YELLOW);
-    DrawTriangle3D(pt2, pt3, pt4, YELLOW);
+    if (drawPolygon) MyDrawPolygonRoundedBox(roundedBox, nSectors, polygonColor);
+    if (drawWireframe)MyDrawWireframeRoundedBox(roundedBox, nSectors, wireframeColor);
 }
