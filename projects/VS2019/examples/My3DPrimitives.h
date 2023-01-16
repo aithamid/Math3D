@@ -509,70 +509,74 @@ void MyDrawPortionSphere(Sphere sphere, int nMeridians, int nParallels, bool
             Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, 1, HALF_PI);
             Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, 1, HALF_PI);
 
+            if (drawPolygon) {
+                int numVertex = 12;
+                if (rlCheckBufferLimit(numVertex)) rlglDraw();
+                rlPushMatrix();
+                rlTranslatef(sphere.ref.origin.x, sphere.ref.origin.y, sphere.ref.origin.z);
+                Vector3 vect;
+                float angle;
+                QuaternionToAxisAngle(sphere.ref.q, &vect, &angle);
+                rlRotatef(angle * RAD2DEG, vect.x, vect.y, vect.z);
+                rlScalef(sphere.radius, sphere.radius, sphere.radius);
 
-            int numVertex = 12;
-            if (rlCheckBufferLimit(numVertex)) rlglDraw();
-            rlPushMatrix();
-            rlTranslatef(sphere.ref.origin.x, sphere.ref.origin.y, sphere.ref.origin.z);
-            Vector3 vect;
-            float angle;
-            QuaternionToAxisAngle(sphere.ref.q, &vect, &angle);
-            rlRotatef(angle * RAD2DEG, vect.x, vect.y, vect.z);
-            rlScalef(sphere.radius, sphere.radius, sphere.radius);
 
-            
-            rlBegin(RL_TRIANGLES);
-            rlColor4ub(polygonColor.r, polygonColor.g, polygonColor.b, polygonColor.a);
-            rlVertex3f(p1.x, p1.y, p1.z);
-            rlVertex3f(p2.x, p2.y, p2.z);
-            rlVertex3f(p3.x, p3.y, p3.z);
+                rlBegin(RL_TRIANGLES);
+                rlColor4ub(polygonColor.r, polygonColor.g, polygonColor.b, polygonColor.a);
+                rlVertex3f(p1.x, p1.y, p1.z);
+                rlVertex3f(p2.x, p2.y, p2.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
 
-            rlVertex3f(p2.x, p2.y, p2.z);
-            rlVertex3f(p1.x, p1.y, p1.z);
-            rlVertex3f(p3.x, p3.y, p3.z);
+                rlVertex3f(p2.x, p2.y, p2.z);
+                rlVertex3f(p1.x, p1.y, p1.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
 
-            rlVertex3f(p4.x, p4.y, p4.z);
-            rlVertex3f(p2.x, p2.y, p2.z);
-            rlVertex3f(p3.x, p3.y, p3.z);
+                rlVertex3f(p4.x, p4.y, p4.z);
+                rlVertex3f(p2.x, p2.y, p2.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
 
-            rlVertex3f(p2.x, p2.y, p2.z);
-            rlVertex3f(p4.x, p4.y, p4.z);
-            rlVertex3f(p3.x, p3.y, p3.z);
+                rlVertex3f(p2.x, p2.y, p2.z);
+                rlVertex3f(p4.x, p4.y, p4.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
 
-            rlEnd();
-            rlPopMatrix();
+                rlEnd();
+                rlPopMatrix();
+            }
 
-            numVertex = 8;
-            if (rlCheckBufferLimit(numVertex)) rlglDraw();
-            rlPushMatrix();
-            rlTranslatef(sphere.ref.origin.x, sphere.ref.origin.y, sphere.ref.origin.z);
-            QuaternionToAxisAngle(sphere.ref.q, &vect, &angle);
-            rlRotatef(angle * RAD2DEG, vect.x, vect.y, vect.z);
-            rlScalef(sphere.radius, sphere.radius, sphere.radius);
-            
-            rlBegin(RL_LINES);
-            rlColor4ub(wireframeColor.r, wireframeColor.g, wireframeColor.b, wireframeColor.a);
-            // DIAGONALE
-            rlVertex3f(p2.x, p2.y, p2.z);
-            rlVertex3f(p3.x, p3.y, p3.z);
+            if (drawWireframe) {
+                int numVertex = 8;
+                if (rlCheckBufferLimit(numVertex)) rlglDraw();
+                rlPushMatrix();
+                rlTranslatef(sphere.ref.origin.x, sphere.ref.origin.y, sphere.ref.origin.z);
+                Vector3 vect;
+                float angle;
+                QuaternionToAxisAngle(sphere.ref.q, &vect, &angle);
+                rlRotatef(angle * RAD2DEG, vect.x, vect.y, vect.z);
+                rlScalef(sphere.radius, sphere.radius, sphere.radius);
 
-            // --
-            rlVertex3f(p1.x, p1.y, p1.z);
-            rlVertex3f(p2.x, p2.y, p2.z);
+                rlBegin(RL_LINES);
+                rlColor4ub(wireframeColor.r, wireframeColor.g, wireframeColor.b, wireframeColor.a);
+                // DIAGONALE
+                rlVertex3f(p2.x, p2.y, p2.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
 
-            rlVertex3f(p3.x, p3.y, p3.z);
-            rlVertex3f(p4.x, p4.y, p4.z);
+                // --
+                rlVertex3f(p1.x, p1.y, p1.z);
+                rlVertex3f(p2.x, p2.y, p2.z);
 
-            // |
-            rlVertex3f(p1.x, p1.y, p1.z);
-            rlVertex3f(p3.x, p3.y, p3.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
+                rlVertex3f(p4.x, p4.y, p4.z);
 
-            rlVertex3f(p2.x, p2.y, p2.z);
-            rlVertex3f(p4.x, p4.y, p4.z);
+                // |
+                rlVertex3f(p1.x, p1.y, p1.z);
+                rlVertex3f(p3.x, p3.y, p3.z);
 
-            rlEnd();
-            rlPopMatrix();
+                rlVertex3f(p2.x, p2.y, p2.z);
+                rlVertex3f(p4.x, p4.y, p4.z);
 
+                rlEnd();
+                rlPopMatrix();
+            }
         }
     }
 }
@@ -889,7 +893,7 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
                     Vector3Normalize({ 1,0,0 }), a[i].x * PI / 2))))
         };
         Sphere sphere = { sphereref,roundedBox.radius };
-        MyDrawPortionSphere(sphere, nSectors, nSectors, drawPolygon, drawWireframe, polygonColor, wireframeColor, 4);
+        MyDrawPortionSphere(sphere, nSectors, nSectors/2, drawPolygon, drawWireframe, polygonColor, wireframeColor, 4);
     }
 }
 
