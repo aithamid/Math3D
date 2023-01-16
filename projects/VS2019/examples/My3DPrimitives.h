@@ -133,12 +133,15 @@ void MyDrawWireframeQuad(Quad quad, Color color = DARKGRAY)
     rlColor4ub(color.r, color.g, color.b, color.a);
     rlVertex3f(1, 0, 1);
     rlVertex3f(1, 0, -1);
+
     rlVertex3f(1, 0, -1);
     rlVertex3f(-1, 0, -1);
-    rlVertex3f(-1, 0, -1);
-    rlVertex3f(1, 0, 1);
+
+    
+
     rlVertex3f(-1, 0, -1);
     rlVertex3f(-1, 0, 1);
+
     rlVertex3f(-1, 0, 1);
     rlVertex3f(1, 0, 1);
     rlEnd();
@@ -219,22 +222,117 @@ void MyDrawDisk(Disk disk, int nSectors, bool drawPolygon = true, bool
     if (drawWireframe)MyDrawWireframeDisk(disk, nSectors, wireframeColor);
 }
 
+
+//BOX
+void MyDrawWireframeBox(Box box, Color color = DARKGRAY)
+{
+    Vector3 size = box.extents;
+    ReferenceFrame right = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.i,box.extents.x)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,-1 }), PI / 2))
+    };
+    Quad qright = { right, {size.y,size.x,size.z} };
+    MyDrawWireframeQuad(qright, color);
+
+    ReferenceFrame left = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.i,-box.extents.x)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,1 }), PI / 2))
+    };
+    Quad qleft = { left, {size.y,size.x,size.z} };
+    MyDrawWireframeQuad(qleft, color);
+
+    ReferenceFrame top = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.j,box.extents.y)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,0 }), PI / 2))
+    };
+    Quad qtop = { top, {size.x,size.y,size.z} };
+    MyDrawWireframeQuad(qtop, color);
+
+    ReferenceFrame bottom = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.j,-box.extents.y)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,1 }), PI))
+    };
+    Quad qbottom = { bottom, {size.x,size.y,size.z} };
+    MyDrawWireframeQuad(qbottom, color);
+
+    ReferenceFrame front = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.k,-box.extents.z)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ -1,0,0 }), PI / 2))
+    };
+    Quad qfront = { front, {size.x,size.z,size.y} };
+    MyDrawWireframeQuad(qfront, color);
+
+    ReferenceFrame rear = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.k,box.extents.z)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 1,0,0 }), PI / 2))
+    };
+    Quad qrear = { rear, {size.x,size.z,size.y} };
+    MyDrawWireframeQuad(qrear, color);
+}
+
 void MyDrawPolygonBox(Box box, Color color = LIGHTGRAY)
 {
-    float x = box.extents.x;
-    float y = box.extents.y;
-    float z = box.extents.z;
+    Vector3 size = box.extents;
+    ReferenceFrame right = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.i,box.extents.x)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,-1 }), PI / 2))
+    };
+    Quad qright = { right, {size.y,size.x,size.z} };
+    MyDrawPolygonQuad(qright, color);
 
-    Vector3 pt1{ x / 2,0,-z / 2 };
-    Vector3 pt2{ -x / 2,0,z / 2 };
-    Vector3 pt3{ x / 2,0,z / 2 };
+    ReferenceFrame left = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.i,-box.extents.x)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,1 }), PI / 2))
+    };
+    Quad qleft = { left, {size.y,size.x,size.z} };
+    MyDrawPolygonQuad(qleft, color);
 
-    DrawTriangle3D(pt1, pt2, pt3, RED);
+    ReferenceFrame top = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.j,box.extents.y)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,0 }), PI / 2))
+    };
+    Quad qtop = { top, {size.x,size.y,size.z} };
+    MyDrawPolygonQuad(qtop, color);
 
-    pt3.x = -x / 2;
-    pt3.z = -z / 2;
-    DrawTriangle3D(pt2, pt1, pt3, YELLOW);
+    ReferenceFrame bottom = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.j,-box.extents.y)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,1 }), PI))
+    };
+    Quad qbottom = { bottom, {size.x,size.y,size.z} };
+    MyDrawPolygonQuad(qbottom, color);
 
+    ReferenceFrame front = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.k,-box.extents.z)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ -1,0,0 }), PI / 2))
+    };
+    Quad qfront = { front, {size.x,size.z,size.y} };
+    MyDrawPolygonQuad(qfront, color);
+
+    ReferenceFrame rear = {
+        Vector3Add(box.ref.origin,Vector3Scale(box.ref.k,box.extents.z)),
+        QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 1,0,0 }), PI / 2))
+    };
+    Quad qrear = { rear, {size.x,size.z,size.y} };
+    MyDrawPolygonQuad(qrear, color);
+    
+}
+
+void MyDrawBox(Box box, bool drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY, Color wireframeColor = DARKGRAY)
+{
+    if (drawPolygon) MyDrawPolygonBox(box, polygonColor);
+    if (drawWireframe)MyDrawWireframeBox(box, wireframeColor);
 }
 
 
@@ -659,27 +757,55 @@ void MyDrawPolygonRoundedBox(RoundedBox roundedBox, int nSectors, Color
 void MyDrawWireframeRoundedBox(RoundedBox roundedBox, int nSectors, Color
     color = LIGHTGRAY)
 {
-    // Draw top sphere
-    ReferenceFrame topRef = {
-        Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.j,roundedBox.radius)),
+
+    Vector3 size = roundedBox.extents;
+    ReferenceFrame right = {
+        Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.i,roundedBox.extents.x+roundedBox.radius)),
         QuaternionMultiply(roundedBox.ref.q, QuaternionFromAxisAngle(
                     Vector3Normalize({ 0,0,-1 }), PI / 2))
     };
-    Sphere topSphere = { topRef, roundedBox.radius };
-    MyDrawWireframePortionSphere(topSphere, nSectors, nSectors, color);
+    Quad qright = { right, {size.y,size.x,size.z} };
+    MyDrawQuad(qright);
 
-    // Draw cylinder
-    Cylinder cylinder = { roundedBox.ref, roundedBox.radius, roundedBox.radius };
-    MyDrawWireframeCylinder(cylinder, nSectors, false, color);
-
-    // Draw bottom sphere
-    ReferenceFrame bottomRef = {
-        Vector3Subtract(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.j,roundedBox.radius)),
+    ReferenceFrame left = {
+        Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.i,-(roundedBox.extents.x + roundedBox.radius))),
         QuaternionMultiply(roundedBox.ref.q, QuaternionFromAxisAngle(
                     Vector3Normalize({ 0,0,1 }), PI / 2))
     };
-    Sphere bottomSphere = { bottomRef, roundedBox.radius };
-    MyDrawWireframePortionSphere(bottomSphere, nSectors, nSectors, color);
+    Quad qleft = { left, {size.y,size.x,size.z} };
+    MyDrawQuad(qleft);
+
+    ReferenceFrame top = {
+        Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.j,roundedBox.extents.y + roundedBox.radius)),
+        QuaternionMultiply(roundedBox.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,0 }), PI / 2))
+    };
+    Quad qtop = { top, {size.x,size.y,size.z} };
+    MyDrawQuad(qtop);
+
+    ReferenceFrame bottom = {
+        Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.j,-(roundedBox.extents.y + roundedBox.radius))),
+        QuaternionMultiply(roundedBox.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 0,0,1 }), PI))
+    };
+    Quad qbottom = { bottom, {size.x,size.y,size.z} };
+    MyDrawQuad(qbottom);
+
+    ReferenceFrame front = {
+        Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.k,-(roundedBox.extents.z + roundedBox.radius))),
+        QuaternionMultiply(roundedBox.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ -1,0,0 }), PI / 2))
+    };
+    Quad qfront = { front, {size.x,size.z,size.y} };
+    MyDrawQuad(qfront);
+
+    ReferenceFrame rear = {
+        Vector3Add(roundedBox.ref.origin,Vector3Scale(roundedBox.ref.k,roundedBox.extents.z + roundedBox.radius)),
+        QuaternionMultiply(roundedBox.ref.q, QuaternionFromAxisAngle(
+                    Vector3Normalize({ 1,0,0 }), PI / 2))
+    };
+    Quad qrear = { rear, {size.x,size.z,size.y} };
+    MyDrawQuad(qrear);
 }
 
 void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
