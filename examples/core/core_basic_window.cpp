@@ -26,6 +26,7 @@
 #include <math.h>
 #include <float.h>
 #include <vector>
+#include <ctime>
 
 #if defined(PLATFORM_DESKTOP)
 #define GLSL_VERSION            330
@@ -35,6 +36,7 @@
 
 #define EPSILON 1.e-6f
 #include "My3DPrimitives.h"
+#include "Intersections.h"
 
 template <typename T> int sgn(T val) {
 	return (T(0) < val) - (val < T(0));
@@ -228,35 +230,30 @@ int main(int argc, char* argv[])
 				QuaternionFromAxisAngle(
 					Vector3Normalize({ 0,0,1 }),
 					PI/4));
+			//TESTS INTERSECTIONS
+			Vector3 interPt;
+			Vector3 interNormal;
+			float t;
+			//THE SEGMENT
+			Segment segment = { {-5,8,0},{5,-8,3} };
+			DrawLine3D(segment.pt1, segment.pt2, BLACK);
+			MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
+			MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
 
-			Quad quad = { ref,{3,0,4}};
-			//MyDrawQuad(quad);
-			//MyTest(quad);
-			Disk disk = { ref,5 };
-			//MyDrawDisk(disk, 32);
+			// TEST LINE PLANE INTERSECTION
+			//Time time;
+			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time * .5f)), 2};
+			ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
+			QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
+			Quad quad = { refQuad,{10,1,10} };
+			MyDrawQuad(quad);
+			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
+			if (IntersectLinePlane(line, plane, t, interPt, interNormal))
+			{
+				MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+				DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+			}
 
-			Cylinder cylinder = { ref,3, 2};
-			//MyDrawCylinder(cylinder, 20,false);
-
-			
-
-
-			Sphere sphere = { ref,5 };
-			//MyDrawSphere(sphere, 10, 10);
-
-			ref = ReferenceFrame(
-				{ 0,0,0 },
-				QuaternionFromAxisAngle(
-					Vector3Normalize({ 0,0,0 }),
-					0));
-			Capsule capsule = { ref,3,2 };
-			//MyDrawCapsule(capsule, 20, 15, false, true, RED, DARKGRAY);
-
-			RoundedBox roundedBox = { ref,{5,3,4},2 };
-			MyDrawRoundedBox(roundedBox, 20, true, true, GREEN, DARKGREEN);
-
-			Box box = { ref,{3,2,5} };
-			//MyDrawBox(box,true,true,PURPLE, DARKPURPLE);
 		}
 		EndMode3D();
 
