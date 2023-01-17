@@ -39,6 +39,19 @@ struct ReferenceFrame {
     }
 };
 
+typedef struct Line {
+    Vector3 pt;
+    Vector3 dir;
+} Line;
+
+typedef struct Segment {
+    Vector3 pt1;
+    Vector3 pt2;
+} Segment;
+
+typedef struct Plane {
+    Vector3 normal;
+} Plane;
 
 typedef struct Quad {
     ReferenceFrame ref;
@@ -133,7 +146,6 @@ void MyDrawWireframeQuad(Quad quad, Color color = DARKGRAY)
     rlColor4ub(color.r, color.g, color.b, color.a);
     rlVertex3f(1, 0, 1);
     rlVertex3f(1, 0, -1);
-
     rlVertex3f(1, 0, -1);
     rlVertex3f(-1, 0, -1);
 
