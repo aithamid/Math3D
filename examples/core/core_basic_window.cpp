@@ -235,14 +235,15 @@ int main(int argc, char* argv[])
 			Vector3 interNormal;
 			float t;
 			//THE SEGMENT
-			Segment segment = { {-5,8,0},{5,-8,3} };
+			Segment segment = { {-5,4,0},{5,-4,3} };
 			DrawLine3D(segment.pt1, segment.pt2, BLACK);
 			MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
 			MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
 
 			// TEST LINE PLANE INTERSECTION
-			//Time time;
-			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time * .5f)), 2};
+			time_t time1;
+			time(&time1);
+			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time1 * .5f)), 2};
 			ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
 			QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
 			Quad quad = { refQuad,{10,1,10} };
