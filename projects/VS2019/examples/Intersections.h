@@ -70,3 +70,19 @@ bool IntersectLinePlane(Line line, Plane plane, float& t, Vector3& interPt, Vect
 		Vector3DotProduct(Vector3Subtract(line.pt, interPt), plane.normal) < 0 ? -1.f : 1.f);
 	return true;
 }
+
+
+bool IntersectSegmentPlane(Segment segment, Plane plane, float& t, Vector3& interPt, Vector3&
+	interNormal)
+{
+	Vector3 dir = Vector3Subtract(segment.pt2, segment.pt1);
+	// no intersection if segment is parallel to the plane
+	float dotProd = Vector3DotProduct(plane.normal, dir);
+	if (fabsf(dotProd) < EPSILON) return false;
+	// intersection: t, interPt & interNormal
+	t = (plane.d - Vector3DotProduct(plane.normal, segment.pt1)) / dotProd;
+	interPt = Vector3Add(segment.pt1, Vector3Scale(dir, t)); // OM = OA+tAB
+	interNormal = Vector3Scale(plane.normal,
+		Vector3DotProduct(Vector3Subtract(segment.pt1, interPt), plane.normal) < 0 ? -1.f : 1.f);
+	return true;
+}
