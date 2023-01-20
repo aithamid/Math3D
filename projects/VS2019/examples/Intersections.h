@@ -23,6 +23,40 @@ typedef struct Segment {
 	Vector3 pt2;
 } Segment;
 
+// Vector conversion
+Vector3 LocalToGlobalVect(Vector3 localPos, ReferenceFrame localRef)
+{
+	Vector3 globalVect = { (localPos.x + localRef.origin.x), (localPos.y + localRef.origin.y), (localPos.z + localRef.origin.z) };
+	globalVect = Vector3RotateByQuaternion(globalVect, localRef.q);
+	return globalVect;
+}
+
+Vector3 GlobalToLocalVect(Vector3 globalPos, ReferenceFrame localRef)
+{
+	Vector3 localVect = { (globalPos.x - localRef.origin.x), (globalPos.y - localRef.origin.y), (globalPos.z - localRef.origin.z) };
+	localVect = Vector3RotateByQuaternion(localVect, localRef.q);
+	//QuaternionFromAxisAngle(localVect);
+	return localVect;
+}
+
+
+
+
+// Position conversion
+Vector3 LocalToGlobalPos(Vector3 localPos, ReferenceFrame localRef)
+{
+	Vector3 globalpos = { (localPos.x + localRef.origin.x), (localPos.y + localRef.origin.y ), (localPos.z + localRef.origin.z) };
+
+	return globalpos;
+}
+
+Vector3 GlobalToLocalPos(Vector3 globalPos, ReferenceFrame localRef)
+{
+	Vector3 localVect = { (globalPos.x - localRef.origin.x), (globalPos.y - localRef.origin.y), (globalPos.z - localRef.origin.z) };
+
+	return localVect;
+}
+
 bool IntersectLinePlane(Line line, Plane plane, float& t, Vector3& interPt, Vector3&
 	interNormal)
 {
