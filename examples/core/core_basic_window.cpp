@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
 			DrawSphere({ 0,0,10 }, .2f, BLUE);
 
 			ReferenceFrame ref = ReferenceFrame(
-				{ 4,5,5 },
+				{ 0,0,0 },
 				QuaternionFromAxisAngle(
 					Vector3Normalize({ 0,0,1 }),
 					PI/4));
@@ -246,10 +246,10 @@ int main(int argc, char* argv[])
 			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time1 * .5f)), 2};
 			ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
 			QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
-			Quad quad = { refQuad,{10,1,10} };
+			Quad quad = { ref,{10,0,10} };
 			MyDrawQuad(quad);
 			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
-			if (IntersectLinePlane(line, plane, t, interPt, interNormal))
+			if (IntersectSegmentQuad(segment, quad, t, interPt, interNormal))
 			{
 				MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 				DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);

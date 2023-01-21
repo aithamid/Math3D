@@ -72,17 +72,34 @@ bool IntersectLinePlane(Line line, Plane plane, float& t, Vector3& interPt, Vect
 }
 
 
-bool IntersectSegmentPlane(Segment segment, Plane plane, float& t, Vector3& interPt, Vector3&
-	interNormal)
+bool IntersectSegmentPlane(Segment segment, Plane plane, float& t, Vector3& interPt, Vector3& interNormal)
 {
-	Vector3 dir = Vector3Subtract(segment.pt2, segment.pt1);
-	// no intersection if segment is parallel to the plane
-	float dotProd = Vector3DotProduct(plane.normal, dir);
-	if (fabsf(dotProd) < EPSILON) return false;
-	// intersection: t, interPt & interNormal
-	t = (plane.d - Vector3DotProduct(plane.normal, segment.pt1)) / dotProd;
-	interPt = Vector3Add(segment.pt1, Vector3Scale(dir, t)); // OM = OA+tAB
-	interNormal = Vector3Scale(plane.normal,
-		Vector3DotProduct(Vector3Subtract(segment.pt1, interPt), plane.normal) < 0 ? -1.f : 1.f);
-	return true;
+	Line line = { segment.pt1, Vector3Subtract(segment.pt2, segment.pt1) };
+	if (IntersectLinePlane(line, plane, t, interPt, interNormal))
+	{
+		if (t >= 0.0f && t <= 1.0f)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool IntersectSegmentQuad(Segment seg, Quad quad, float& t, Vector3& interPt, Vector3& interNormal)
+{
+    // Create the plane from the quad
+    Plane plane = {quad.ref.j, Vector3DotProduct(quad.ref.origin, quad.ref.j)};
+    // Intersect the segment with the plane
+    if (IntersectSegmentPlane(seg, plane, t, interPt, interNormal))
+    {
+        // Calculate the intersection point in the quad's local space
+        Vector3 localInterPt = Vector3Subtract(interPt, quad.ref.origin);
+        Vector3 localInterPtProjected = Vector3({Vector3DotProduct(localInterPt, quad.ref.i), Vector3DotProduct(localInterPt, quad.ref.k), 0.0f});
+        // Check if the intersection point is inside the extents of the quad
+        if (abs(localInterPtProjected.x) <= quad.extents.x && abs(localInterPtProjected.y) <= quad.extents.z)
+        {
+            return true;
+        }
+    }
+    return false;
 }
