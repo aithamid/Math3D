@@ -225,35 +225,42 @@ int main(int argc, char* argv[])
 			DrawSphere({ 0,10,0 }, .2f, GREEN);
 			DrawSphere({ 0,0,10 }, .2f, BLUE);
 
-			ReferenceFrame ref = ReferenceFrame(
-				{ 0,0,0 },
-				QuaternionFromAxisAngle(
-					Vector3Normalize({ 0,0,1 }),
-					PI/4));
+	
 			//TESTS INTERSECTIONS
 			Vector3 interPt;
 			Vector3 interNormal;
 			float t;
 			//THE SEGMENT
-			Segment segment = { {-5,4,0},{5,-4,3} };
+			Segment segment = { {-5,4,-7},{5,-4,3} };
 			DrawLine3D(segment.pt1, segment.pt2, BLACK);
 			MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
 			MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
 
-			// TEST LINE PLANE INTERSECTION
-			time_t time1;
-			time(&time1);
-			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time1 * .5f)), 2};
-			ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
-			QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
-			Quad quad = { ref,{10,0,10} };
-			MyDrawQuad(quad);
-			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
-			if (IntersectSegmentQuad(segment, quad, t, interPt, interNormal))
+			ReferenceFrame ref = ReferenceFrame(
+				{ 1,3,-2 },
+				QuaternionFromAxisAngle(
+					Vector3Normalize({ 0,0,0 }),
+					PI / 4));
+
+			Sphere sphere = { ref, 5 };
+			MyDrawWireframeSphere(sphere, 30, 30);
+
+			if (IntersectSegmentSphere(segment, sphere, t, interPt, interNormal))
 			{
 				MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 				DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
 			}
+
+			// TEST LINE PLANE INTERSECTION
+			time_t time1;
+			time(&time1);
+			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time1 * .5f)), 2 };
+			ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
+			QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
+			//quad = { ref,{10,0,10} };
+			//MyDrawQuad(quad);
+			/*Disk disk = { ref, 2 };
+			MyDrawDisk(disk, 15);*/
 
 		}
 		EndMode3D();

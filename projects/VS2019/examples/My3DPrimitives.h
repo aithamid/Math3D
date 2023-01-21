@@ -335,7 +335,7 @@ void MyDrawBox(Box box, bool drawPolygon = true, bool drawWireframe = true, Colo
 }
 
 
-Vector3 Find_coo(int i,int nMeridians, int j, int nParallels, float r, float portion = HALF_PI, Vector3 position = {0,0,0})
+Vector3 Find_coo(int i,int nMeridians, int j, int nParallels, float r, float portion = PI, Vector3 position = {0,0,0})
 {
     float lon = (i - 0) * (portion - -portion) / (nMeridians - 0) + -portion;
     float lat = (j - 0) * (HALF_PI - -HALF_PI) / (nParallels - 0) + -HALF_PI;

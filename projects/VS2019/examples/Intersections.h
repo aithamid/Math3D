@@ -102,3 +102,42 @@ bool IntersectSegmentQuad(Segment seg, Quad quad, float& t, Vector3& interPt, Ve
     }
     return false;
 }
+
+bool IntersectSegmentDisk(Segment segment, Disk disk, float& t, Vector3& interPt, Vector3& interNormal)
+{
+
+	Plane plane = { disk.ref.j, Vector3DotProduct(disk.ref.origin, disk.ref.j) };
+
+	if (IntersectSegmentPlane(segment, plane, t, interPt, interNormal))
+	{
+
+		float distance = Vector3Length(Vector3Subtract(interPt, disk.ref.origin));
+
+		if (distance <= disk.radius)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool IntersectSegmentSphere(Segment seg, Sphere sphere, float& t, Vector3& interPt, Vector3& interNormal)
+{
+    V
+}
+
+	
+//bool IntersectSegmentInfiniteCylinder(Segment segment, InfiniteCylinder cyl, float& t,
+//	Vector3& interPt, Vector3& interNormal){}
+//
+//bool IntersectSegmentCylinder(Segment segment, Cylinder cyl, float& t, Vector3&
+//	interPt, Vector3& interNormal){}
+//
+//bool IntersectSegmentCapsule(Segment seg, Capsule capsule, float& t, Vector3&
+//	interPt, Vector3& interNormal){}
+//
+//bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt,
+//	Vector3& interNormal){}
+//
+//bool IntersectSegmentRoundedBox(Segment seg, RoundedBox rndBox, float& t,
+//	Vector3& interPt, Vector3& interNormal){}
