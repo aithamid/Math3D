@@ -87,15 +87,14 @@ bool IntersectSegmentPlane(Segment segment, Plane plane, float& t, Vector3& inte
 
 bool IntersectSegmentQuad(Segment seg, Quad quad, float& t, Vector3& interPt, Vector3& interNormal)
 {
-    // Create the plane from the quad
     Plane plane = {quad.ref.j, Vector3DotProduct(quad.ref.origin, quad.ref.j)};
-    // Intersect the segment with the plane
+
     if (IntersectSegmentPlane(seg, plane, t, interPt, interNormal))
     {
-        // Calculate the intersection point in the quad's local space
+
         Vector3 localInterPt = Vector3Subtract(interPt, quad.ref.origin);
         Vector3 localInterPtProjected = Vector3({Vector3DotProduct(localInterPt, quad.ref.i), Vector3DotProduct(localInterPt, quad.ref.k), 0.0f});
-        // Check if the intersection point is inside the extents of the quad
+
         if (abs(localInterPtProjected.x) <= quad.extents.x && abs(localInterPtProjected.y) <= quad.extents.z)
         {
             return true;
