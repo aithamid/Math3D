@@ -181,8 +181,91 @@ bool IntersectSegmentSphere(Segment seg, Sphere s, float& t1, float& t2, Vector3
 //bool IntersectSegmentCapsule(Segment seg, Capsule capsule, float& t, Vector3&
 //	interPt, Vector3& interNormal){}
 //
-//bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt,
-//	Vector3& interNormal){}
-//
-//bool IntersectSegmentRoundedBox(Segment seg, RoundedBox rndBox, float& t,
-//	Vector3& interPt, Vector3& interNormal){}
+bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vector3& interNormal)
+{
+	Vector3 size = box.extents;
+	ReferenceFrame right = {
+		Vector3Add(box.ref.origin,Vector3Scale(box.ref.i,box.extents.x)),
+		QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+					Vector3Normalize({ 0,0,-1 }), PI / 2))
+	};
+	Quad qright = { right, {size.y,size.x,size.z} };
+	//
+	if (IntersectSegmentQuad(seg, qright, t, interPt, interNormal))
+	{
+		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+	}
+
+	ReferenceFrame left = {
+		Vector3Add(box.ref.origin,Vector3Scale(box.ref.i,-box.extents.x)),
+		QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+					Vector3Normalize({ 0,0,1 }), PI / 2))
+	};
+	Quad qleft = { left, {size.y,size.x,size.z} };
+	//
+	if (IntersectSegmentQuad(seg, qleft, t, interPt, interNormal))
+	{
+		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+	}
+
+	ReferenceFrame top = {
+		Vector3Add(box.ref.origin,Vector3Scale(box.ref.j,box.extents.y)),
+		QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+					Vector3Normalize({ 0,0,0 }), PI / 2))
+	};
+	Quad qtop = { top, {size.x,size.y,size.z} };
+	//
+	if (IntersectSegmentQuad(seg, qtop, t, interPt, interNormal))
+	{
+		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+	}
+
+	ReferenceFrame bottom = {
+		Vector3Add(box.ref.origin,Vector3Scale(box.ref.j,-box.extents.y)),
+		QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+					Vector3Normalize({ 0,0,1 }), PI))
+	};
+	Quad qbottom = { bottom, {size.x,size.y,size.z} };
+	//
+	if (IntersectSegmentQuad(seg, qbottom, t, interPt, interNormal))
+	{
+		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+	}
+
+	ReferenceFrame front = {
+		Vector3Add(box.ref.origin,Vector3Scale(box.ref.k,-box.extents.z)),
+		QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+					Vector3Normalize({ -1,0,0 }), PI / 2))
+	};
+	Quad qfront = { front, {size.x,size.z,size.y} };
+	//
+	if (IntersectSegmentQuad(seg, qfront, t, interPt, interNormal))
+	{
+		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+	}
+
+	ReferenceFrame rear = {
+		Vector3Add(box.ref.origin,Vector3Scale(box.ref.k,box.extents.z)),
+		QuaternionMultiply(box.ref.q, QuaternionFromAxisAngle(
+					Vector3Normalize({ 1,0,0 }), PI / 2))
+	};
+	Quad qrear = { rear, {size.x,size.z,size.y} };
+	//
+	if (IntersectSegmentQuad(seg, qrear, t, interPt, interNormal))
+	{
+		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+	}
+	return false;
+}
+
+
+bool IntersectSegmentRoundedBox(Segment seg, RoundedBox rndBox, float& t, Vector3& interPt, Vector3& interNormal)
+{
+	
+}

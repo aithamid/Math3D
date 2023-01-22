@@ -243,14 +243,18 @@ int main(int argc, char* argv[])
 					Vector3Normalize({ 0,0,0 }),
 					PI / 4));
 
-			Sphere sphere = { ref, 5 };
-			MyDrawWireframeSphere(sphere, 30, 30);
+			//Sphere sphere = { ref, 5 };
+			//MyDrawWireframeSphere(sphere, 30, 30);
 
-			if (IntersectSegmentSphere(segment, sphere, t, t2, interNormal))
-			{
-				//MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
-				//DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
-			}
+			//if (IntersectSegmentSphere(segment, sphere, t, t2, interNormal))
+			//{
+			//	//MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+			//	//DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+			//}
+			
+			Box box = { ref,{5,4,3} };
+			MyDrawWireframeBox(box);
+			IntersectSegmentBox(segment, box, t, interPt, interNormal);
 
 			// TEST LINE PLANE INTERSECTION
 			time_t time1;
