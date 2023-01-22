@@ -112,7 +112,7 @@ bool IntersectSegmentDisk(Segment segment, Disk disk, float& t, Vector3& interPt
 	if (IntersectSegmentPlane(segment, plane, t, interPt, interNormal))
 	{
 
-		float distance = Vector3Length(Vector3Subtract(interPt, disk.ref.origin));
+		float distance = Vector3Length(GlobalToLocalPos(interPt, disk.ref));
 
 		if (distance <= disk.radius)
 		{
