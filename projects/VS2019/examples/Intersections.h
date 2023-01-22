@@ -124,23 +124,23 @@ bool IntersectSegmentDisk(Segment segment, Disk disk, float& t, Vector3& interPt
 
 bool IntersectSegmentSphere(Segment seg, Sphere s, float& t1, float& t2, Vector3& interNormal)
 {
-	Vector3 interPt[2];
-	Vector3 OA = Vector3Subtract(seg.pt1, s.ref.origin);
-	Vector3 AB = Vector3Subtract(seg.pt2, seg.pt1);
-	float a = Vector3DotProduct(AB, AB);
-	float b = 2 * Vector3DotProduct(AB, OA);
-	float c = Vector3DotProduct(OA, OA) - s.radius * s.radius;
-	float discriminant = b * b - 4 * a * c;
-	if (discriminant < 0)
+	Vector3 interPt[2]; // Tableau pour stocker les points d'intersection
+	Vector3 OA = Vector3Subtract(seg.pt1, s.ref.origin); // Calcule le vecteur allant de l'origine de la sphère au point de départ du segment
+	Vector3 AB = Vector3Subtract(seg.pt2, seg.pt1); // Calcule le vecteur allant du point de départ au point d'arrivée du segment
+	float a = Vector3DotProduct(AB, AB); // Calcule a pour l'équation quadratique
+	float b = 2 * Vector3DotProduct(AB, OA); // Calcule b pour l'équation quadratique
+	float c = Vector3DotProduct(OA, OA) - s.radius * s.radius; // Calcule c pour l'équation quadratique
+	float discriminant = b * b - 4 * a * c; // Calcule le discriminant pour déterminer le nombre de solutions possibles
+	if (discriminant < 0) // Pas de solutions
 		return false;
-	else if (discriminant == 0)
+	else if (discriminant == 0) // Une seule solution
 	{
 		t1 = -b / (2 * a);
-		if (t1 >= 0 && t1 <= 1)
+		if (t1 >= 0 && t1 <= 1) // Vérifie si la solution est valide (entre 0 et 1)
 		{
-			interPt[0] = Vector3Add(seg.pt1, Vector3Scale(AB, t1));
-			interNormal = Vector3Normalize(Vector3Subtract(interPt[0], s.ref.origin));
-			t2 = NAN;
+			interPt[0] = Vector3Add(seg.pt1, Vector3Scale(AB, t1)); // Calcule le point d'intersection
+			interNormal = Vector3Normalize(Vector3Subtract(interPt[0], s.ref.origin)); // Calcule le vecteur normal à la surface de la sphère au point d'intersection
+			t2 = NAN; // Initialise t2 car il n'y a qu'une intersection
 			MyDrawPolygonSphere({ {interPt[0],QuaternionIdentity()},.1f }, 16, 8, YELLOW);
 			DrawLine3D(interPt[0], Vector3Add(Vector3Scale(interNormal, 1), interPt[0]), YELLOW);
 			return true;
@@ -148,22 +148,22 @@ bool IntersectSegmentSphere(Segment seg, Sphere s, float& t1, float& t2, Vector3
 		else
 			return false;
 	}
-	else
+	else // Deux solutions
 	{
 		float sqrt_discriminant = sqrt(discriminant);
 		t1 = (-b + sqrt_discriminant) / (2 * a);
 		t2 = (-b - sqrt_discriminant) / (2 * a);
-		if (t1 >= 0 && t1 <= 1)
+		if (t1 >= 0 && t1 <= 1) // Vérifie si la 1er solution est valide (entre 0 et 1)
 		{
-			interPt[0] = Vector3Add(seg.pt1, Vector3Scale(AB, t1));
-			interNormal = Vector3Normalize(Vector3Subtract(interPt[0], s.ref.origin));
+			interPt[0] = Vector3Add(seg.pt1, Vector3Scale(AB, t1)); // Calcule le 1er point d'intersection
+			interNormal = Vector3Normalize(Vector3Subtract(interPt[0], s.ref.origin)); // Calcule le vecteur normal à la surface de la sphère au point d'intersection
 			MyDrawPolygonSphere({ {interPt[0],QuaternionIdentity()},.1f }, 16, 8, YELLOW);
 			DrawLine3D(interPt[0], Vector3Add(Vector3Scale(interNormal, 1), interPt[0]), YELLOW);
 		}
 		if (t2 >= 0 && t2 <= 1)
 		{
-			interPt[1] = Vector3Add(seg.pt1, Vector3Scale(AB, t2));
-			interNormal = Vector3Normalize(Vector3Subtract(interPt[1], s.ref.origin));
+			interPt[1] = Vector3Add(seg.pt1, Vector3Scale(AB, t2)); // Calcule le 2eme point d'intersection
+			interNormal = Vector3Normalize(Vector3Subtract(interPt[1], s.ref.origin)); // Calcule le vecteur normal à la surface de la sphère au point d'intersection
 			MyDrawPolygonSphere({ {interPt[1],QuaternionIdentity()},.1f }, 16, 8, GREEN);
 			DrawLine3D(interPt[1], Vector3Add(Vector3Scale(interNormal, 1), interPt[1]), GREEN);
 		}
