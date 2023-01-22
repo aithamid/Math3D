@@ -230,6 +230,7 @@ int main(int argc, char* argv[])
 			Vector3 interPt;
 			Vector3 interNormal;
 			float t;
+			float t2;
 			//THE SEGMENT
 			Segment segment = { {-5,4,-7},{5,-4,3} };
 			DrawLine3D(segment.pt1, segment.pt2, BLACK);
@@ -245,10 +246,10 @@ int main(int argc, char* argv[])
 			Sphere sphere = { ref, 5 };
 			MyDrawWireframeSphere(sphere, 30, 30);
 
-			if (IntersectSegmentSphere(segment, sphere, t, interPt, interNormal))
+			if (IntersectSegmentSphere(segment, sphere, t, t2, interNormal))
 			{
-				MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
-				DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+				//MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+				//DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
 			}
 
 			// TEST LINE PLANE INTERSECTION

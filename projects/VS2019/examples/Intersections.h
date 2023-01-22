@@ -122,9 +122,53 @@ bool IntersectSegmentDisk(Segment segment, Disk disk, float& t, Vector3& interPt
 	return false;
 }
 
-bool IntersectSegmentSphere(Segment seg, Sphere sphere, float& t, Vector3& interPt, Vector3& interNormal)
+bool IntersectSegmentSphere(Segment seg, Sphere s, float& t1, float& t2, Vector3& interNormal)
 {
-	return true;
+	Vector3 interPt[2];
+	Vector3 OA = Vector3Subtract(seg.pt1, s.ref.origin);
+	Vector3 AB = Vector3Subtract(seg.pt2, seg.pt1);
+	float a = Vector3DotProduct(AB, AB);
+	float b = 2 * Vector3DotProduct(AB, OA);
+	float c = Vector3DotProduct(OA, OA) - s.radius * s.radius;
+	float discriminant = b * b - 4 * a * c;
+	if (discriminant < 0)
+		return false;
+	else if (discriminant == 0)
+	{
+		t1 = -b / (2 * a);
+		if (t1 >= 0 && t1 <= 1)
+		{
+			interPt[0] = Vector3Add(seg.pt1, Vector3Scale(AB, t1));
+			interNormal = Vector3Normalize(Vector3Subtract(interPt[0], s.ref.origin));
+			t2 = NAN;
+			MyDrawPolygonSphere({ {interPt[0],QuaternionIdentity()},.1f }, 16, 8, YELLOW);
+			DrawLine3D(interPt[0], Vector3Add(Vector3Scale(interNormal, 1), interPt[0]), YELLOW);
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+	{
+		float sqrt_discriminant = sqrt(discriminant);
+		t1 = (-b + sqrt_discriminant) / (2 * a);
+		t2 = (-b - sqrt_discriminant) / (2 * a);
+		if (t1 >= 0 && t1 <= 1)
+		{
+			interPt[0] = Vector3Add(seg.pt1, Vector3Scale(AB, t1));
+			interNormal = Vector3Normalize(Vector3Subtract(interPt[0], s.ref.origin));
+			MyDrawPolygonSphere({ {interPt[0],QuaternionIdentity()},.1f }, 16, 8, YELLOW);
+			DrawLine3D(interPt[0], Vector3Add(Vector3Scale(interNormal, 1), interPt[0]), YELLOW);
+		}
+		if (t2 >= 0 && t2 <= 1)
+		{
+			interPt[1] = Vector3Add(seg.pt1, Vector3Scale(AB, t2));
+			interNormal = Vector3Normalize(Vector3Subtract(interPt[1], s.ref.origin));
+			MyDrawPolygonSphere({ {interPt[1],QuaternionIdentity()},.1f }, 16, 8, GREEN);
+			DrawLine3D(interPt[1], Vector3Add(Vector3Scale(interNormal, 1), interPt[1]), GREEN);
+		}
+		return true;
+	}
 }
 
 	
