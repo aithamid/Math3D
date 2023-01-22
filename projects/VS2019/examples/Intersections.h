@@ -160,7 +160,7 @@ bool IntersectSegmentSphere(Segment seg, Sphere s, float& t1, float& t2, Vector3
 			MyDrawPolygonSphere({ {interPt[0],QuaternionIdentity()},.1f }, 16, 8, YELLOW);
 			DrawLine3D(interPt[0], Vector3Add(Vector3Scale(interNormal, 1), interPt[0]), YELLOW);
 		}
-		if (t2 >= 0 && t2 <= 1)
+		if (t2 >= 0 && t2 <= 1) // Vérifie si la 2eme solution est valide (entre 0 et 1)
 		{
 			interPt[1] = Vector3Add(seg.pt1, Vector3Scale(AB, t2)); // Calcule le 2eme point d'intersection
 			interNormal = Vector3Normalize(Vector3Subtract(interPt[1], s.ref.origin)); // Calcule le vecteur normal à la surface de la sphère au point d'intersection
