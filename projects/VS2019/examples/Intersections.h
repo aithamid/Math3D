@@ -23,29 +23,10 @@ typedef struct Segment {
 	Vector3 pt2;
 } Segment;
 
-// Vector conversion
-Vector3 LocalToGlobalVect(Vector3 localPos, ReferenceFrame localRef)
-{
-	Vector3 globalVect = { (localPos.x + localRef.origin.x), (localPos.y + localRef.origin.y), (localPos.z + localRef.origin.z) };
-	globalVect = Vector3RotateByQuaternion(globalVect, localRef.q);
-	return globalVect;
-}
-
-Vector3 GlobalToLocalVect(Vector3 globalPos, ReferenceFrame localRef)
-{
-	Vector3 localVect = { (globalPos.x - localRef.origin.x), (globalPos.y - localRef.origin.y), (globalPos.z - localRef.origin.z) };
-	localVect = Vector3RotateByQuaternion(localVect, localRef.q);
-	//QuaternionFromAxisAngle(localVect);
-	return localVect;
-}
-
-
-
-
 // Position conversion
 Vector3 LocalToGlobalPos(Vector3 localPos, ReferenceFrame localRef)
 {
-	Vector3 globalpos = { (localPos.x + localRef.origin.x), (localPos.y + localRef.origin.y ), (localPos.z + localRef.origin.z) };
+	Vector3 globalpos = { (localPos.x + localRef.origin.x), (localPos.y + localRef.origin.y), (localPos.z + localRef.origin.z) };
 
 	return globalpos;
 }
@@ -56,6 +37,27 @@ Vector3 GlobalToLocalPos(Vector3 globalPos, ReferenceFrame localRef)
 
 	return localVect;
 }
+
+// Vector conversion
+Vector3 LocalToGlobalVect(Vector3 localPos, ReferenceFrame localRef)
+{
+	Vector3 globalVect = { (localPos.x + localRef.origin.x), (localPos.y + localRef.origin.y), (localPos.z + localRef.origin.z) };
+	globalVect = Vector3RotateByQuaternion(globalVect, localRef.q);
+	return globalVect;
+}
+
+Vector3 GlobalToLocalVect(Vector3 globalPos, ReferenceFrame localRef)
+{
+	Vector3 localInterPt = GlobalToLocalPos(globalPos, localRef);
+	Vector3 localInterPtProjected = Vector3({ Vector3DotProduct(localInterPt, localRef.i), Vector3DotProduct(localInterPt, localRef.k), 0.0f });
+	//QuaternionFromAxisAngle(localVect);
+	return localInterPtProjected;
+}
+
+
+
+
+
 
 bool IntersectLinePlane(Line line, Plane plane, float& t, Vector3& interPt, Vector3&
 	interNormal)
@@ -92,8 +94,7 @@ bool IntersectSegmentQuad(Segment seg, Quad quad, float& t, Vector3& interPt, Ve
     if (IntersectSegmentPlane(seg, plane, t, interPt, interNormal))
     {
 
-        Vector3 localInterPt = Vector3Subtract(interPt, quad.ref.origin);
-        Vector3 localInterPtProjected = Vector3({Vector3DotProduct(localInterPt, quad.ref.i), Vector3DotProduct(localInterPt, quad.ref.k), 0.0f});
+		Vector3 localInterPtProjected=GlobalToLocalVect(interPt, quad.ref);
 
         if (abs(localInterPtProjected.x) <= quad.extents.x && abs(localInterPtProjected.y) <= quad.extents.z)
         {
@@ -123,7 +124,7 @@ bool IntersectSegmentDisk(Segment segment, Disk disk, float& t, Vector3& interPt
 
 bool IntersectSegmentSphere(Segment seg, Sphere sphere, float& t, Vector3& interPt, Vector3& interNormal)
 {
-    V
+	return true;
 }
 
 	
