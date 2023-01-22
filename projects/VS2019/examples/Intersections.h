@@ -89,19 +89,20 @@ bool IntersectSegmentPlane(Segment segment, Plane plane, float& t, Vector3& inte
 
 bool IntersectSegmentQuad(Segment seg, Quad quad, float& t, Vector3& interPt, Vector3& interNormal)
 {
-    Plane plane = {quad.ref.j, Vector3DotProduct(quad.ref.origin, quad.ref.j)};
+	// on creer un plan infini pour voir si le segment est le touche
+	Plane plane = { quad.ref.j, Vector3DotProduct(quad.ref.origin, quad.ref.j) };
 
-    if (IntersectSegmentPlane(seg, plane, t, interPt, interNormal))
-    {
+	if (IntersectSegmentPlane(seg, plane, t, interPt, interNormal))
+	{
+		//On se place dans le referentiel local pour voir si le segment est dans le quad
+		Vector3 localInterPtProjected = GlobalToLocalVect(interPt, quad.ref);
 
-		Vector3 localInterPtProjected=GlobalToLocalVect(interPt, quad.ref);
-
-        if (abs(localInterPtProjected.x) <= quad.extents.x && abs(localInterPtProjected.y) <= quad.extents.z)
-        {
-            return true;
-        }
-    }
-    return false;
+		if (abs(localInterPtProjected.x) <= quad.extents.x && abs(localInterPtProjected.y) <= quad.extents.z)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 bool IntersectSegmentDisk(Segment segment, Disk disk, float& t, Vector3& interPt, Vector3& interNormal)
@@ -175,8 +176,18 @@ bool IntersectSegmentSphere(Segment seg, Sphere s, float& t1, float& t2, Vector3
 //bool IntersectSegmentInfiniteCylinder(Segment segment, InfiniteCylinder cyl, float& t,
 //	Vector3& interPt, Vector3& interNormal){}
 //
-//bool IntersectSegmentCylinder(Segment segment, Cylinder cyl, float& t, Vector3&
-//	interPt, Vector3& interNormal){}
+bool IntersectSegmentCylinder(Segment segment, Cylinder cyl, float& t, Vector3&
+	interPt, Vector3& interNormal)
+{
+	Vector3 interPt_cyl[2]; // Tableau pour stocker les points d'intersection
+	Vector3 OA = Vector3Subtract(segment.pt1, cyl.ref.origin); // Calcule le vecteur allant de l'origine de la sphère au point de départ du segment
+	Vector3 AB = Vector3Subtract(segment.pt2, segment.pt1); // Calcule le vecteur allant du point de départ au point d'arrivée du segment
+	float a = Vector3DotProduct(AB, AB); // Calcule a pour l'équation quadratique
+	float b = 2 * Vector3DotProduct(AB, OA); // Calcule b pour l'équation quadratique
+	float c = Vector3DotProduct(OA, OA) - cyl.radius * cyl.radius; // Calcule c pour l'équation quadratique
+
+	return true;
+}
 //
 //bool IntersectSegmentCapsule(Segment seg, Capsule capsule, float& t, Vector3&
 //	interPt, Vector3& interNormal){}
@@ -265,7 +276,7 @@ bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vecto
 }
 
 
-bool IntersectSegmentRoundedBox(Segment seg, RoundedBox rndBox, float& t, Vector3& interPt, Vector3& interNormal)
-{
-	
-}
+//bool IntersectSegmentRoundedBox(Segment seg, RoundedBox rndBox, float& t, Vector3& interPt, Vector3& interNormal)
+//{
+//	
+//}
