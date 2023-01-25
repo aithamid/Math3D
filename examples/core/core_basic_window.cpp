@@ -179,11 +179,19 @@ int main(int argc, char* argv[])
 	Camera.up = { 0.0f, 1.0f, 0.0f };
 	Camera.type = CAMERA_PERSPECTIVE;
 	Spherical sph;
+	ReferenceFrame ref = ReferenceFrame(
+		{ 1,3,-2 },
+		QuaternionFromAxisAngle(
+			Vector3Normalize({ 0,0,0 }),
+			PI / 4));
+	Sphere sphere = { ref, 3 };
+	sphere.ref.origin = { -10,5,-5 };
 	sph.rho = 25;  // how far away from the target the camera is (radius)
 	sph.theta = 45; // the rotation angle around the target  (around Y)
 	sph.phi = 45; // the tilt tangle of the camera (up/down)
-
-	
+	float vitessesphere = 0.0;
+	Quaternion qROt = { 0,1,0,0 };
+	float time = (float)GetTime();
 
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
 
@@ -227,45 +235,72 @@ int main(int argc, char* argv[])
 
 	
 			//TESTS INTERSECTIONS
-			Vector3 interPt;
-			Vector3 interNormal;
-			float t;
-			float t2;
-			//THE SEGMENT
-			Segment segment = { {-5,4,-7},{5,-4,3} };
-			DrawLine3D(segment.pt1, segment.pt2, BLACK);
-			MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
-			MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
+			//Vector3 interPt;
+			//Vector3 interNormal;
+			//float t;
+			//float t2;
+			////THE SEGMENT
+			//Segment segment = { {-5,4,-7},{3,0,-5} };
+			//DrawLine3D(segment.pt1, segment.pt2, BLACK);
+			//MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
+			//MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
 
-			ReferenceFrame ref = ReferenceFrame(
-				{ 1,3,-2 },
-				QuaternionFromAxisAngle(
-					Vector3Normalize({ 0,0,0 }),
-					PI / 4));
+			//sphere.ref.origin.x+=vitessesphere;
 
-			//Sphere sphere = { ref, 5 };
+			//
 			//MyDrawWireframeSphere(sphere, 30, 30);
+
+			////sphere.ref.RotateByQuaternion(qROt);
 
 			//if (IntersectSegmentSphere(segment, sphere, t, t2, interNormal))
 			//{
+			//	//vitessesphere = -0.1;
 			//	//MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 			//	//DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
 			//}
 			
-			Box box = { ref,{5,4,3} };
-			MyDrawWireframeBox(box);
-			IntersectSegmentBox(segment, box, t, interPt, interNormal);
+			//Cylinder cyl = { ref,5,5 };
+			//MyDrawPolygonCylinder(cyl,25);
+			//IntersectSegmentCylinder(segment, cyl, t, t2, interNormal);
 
 			// TEST LINE PLANE INTERSECTION
-			time_t time1;
-			time(&time1);
-			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time1 * .5f)), 2 };
-			ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
-			QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
+			//time_t time1;
+			//time(&time1);
+			//Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time1 * .5f)), 2 };
+			//ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
+			//QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
 			//quad = { ref,{10,0,10} };
 			//MyDrawQuad(quad);
 			/*Disk disk = { ref, 2 };
 			MyDrawDisk(disk, 15);*/
+
+
+			//TESTS INTERSECTIONS
+			Vector3 interPt;
+			Vector3 interNormal;
+			float t;
+			time = GetTime();
+			//time_t time;
+			//time(&time1);
+
+			//THE SEGMENT
+			Segment segment = { {-5,8,0},{5,-8,3} };
+			DrawLine3D(segment.pt1, segment.pt2, BLACK);
+			MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
+			MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
+			// TEST LINE PLANE INTERSECTION
+			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time* .5f)), 2 };
+			ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
+			QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
+			Disk quad = { refQuad,5 };
+			MyDrawDisk(quad,10);
+			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
+			if (IntersectSegmentDisk(segment, quad, t, interPt, interNormal))
+			{
+				MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+				DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+			}
+			
 
 		}
 		EndMode3D();
