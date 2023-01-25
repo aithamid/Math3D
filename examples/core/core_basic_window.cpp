@@ -184,8 +184,8 @@ int main(int argc, char* argv[])
 		QuaternionFromAxisAngle(
 			Vector3Normalize({ 0,0,0 }),
 			PI / 4));
-	Sphere sphere = { ref, 3 };
-	sphere.ref.origin = { -10,5,-5 };
+	//Sphere sphere = { ref, 3 };
+	//sphere.ref.origin = { -10,5,-5 };
 	sph.rho = 25;  // how far away from the target the camera is (radius)
 	sph.theta = 45; // the rotation angle around the target  (around Y)
 	sph.phi = 45; // the tilt tangle of the camera (up/down)
@@ -193,11 +193,29 @@ int main(int argc, char* argv[])
 	Quaternion qROt = { 0,1,0,0 };
 	float time = (float)GetTime();
 
+	ReferenceFrame refsphere;
+	refsphere.origin = { 0,10,0 };
+	Sphere sphere = { refsphere,1 };
+
+	ReferenceFrame refbox;
+	Box box = { refbox,{5,1,5} };
+
+	Vector3 g = { 0,9.81,0 };
+	Vector3 velocity = { 0,0.1,0 };
+	Vector3 newVelocity = { 0,0,0 };
+	double m = 0.1;
+	double hauteur0;
+	double energie0;
+	Gravity gravity = { sphere,box };
+
+
+
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
 
 	//--------------------------------------------------------------------------------------
 	
-
+	hauteur0 = abs(sphere.ref.origin.y-sphere.radius - (box.ref.origin.y+box.extents.y));
+	energie0 = ((m * (velocity.y * velocity.y)) / 2) + m * (g.y) * hauteur0;
 
 	// Main game loop
 	while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -223,9 +241,7 @@ int main(int argc, char* argv[])
 
 		
 		BeginMode3D(Camera);
-		{
-			//
-				
+		{				
 			//3D REFERENTIAL
 			DrawGrid(20, 1.0f);        // Draw a grid
 			DrawLine3D({ 0 }, { 0,10,0 }, DARKGRAY);
@@ -233,72 +249,59 @@ int main(int argc, char* argv[])
 			DrawSphere({ 0,10,0 }, .2f, GREEN);
 			DrawSphere({ 0,0,10 }, .2f, BLUE);
 
-	
-			//TESTS INTERSECTIONS
-			//Vector3 interPt;
-			//Vector3 interNormal;
-			//float t;
-			//float t2;
-			////THE SEGMENT
-			//Segment segment = { {-5,4,-7},{3,0,-5} };
-			//DrawLine3D(segment.pt1, segment.pt2, BLACK);
-			//MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
-			//MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
-
-			//sphere.ref.origin.x+=vitessesphere;
-
-			//
-			//MyDrawWireframeSphere(sphere, 30, 30);
-
-			////sphere.ref.RotateByQuaternion(qROt);
-
-			//if (IntersectSegmentSphere(segment, sphere, t, t2, interNormal))
-			//{
-			//	//vitessesphere = -0.1;
-			//	//MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
-			//	//DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
-			//}
-			
-			//Cylinder cyl = { ref,5,5 };
-			//MyDrawPolygonCylinder(cyl,25);
-			//IntersectSegmentCylinder(segment, cyl, t, t2, interNormal);
-
-			// TEST LINE PLANE INTERSECTION
-			//time_t time1;
-			//time(&time1);
-			//Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time1 * .5f)), 2 };
-			//ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
-			//QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
-			//quad = { ref,{10,0,10} };
-			//MyDrawQuad(quad);
-			/*Disk disk = { ref, 2 };
-			MyDrawDisk(disk, 15);*/
-
 
 			//TESTS INTERSECTIONS
 			Vector3 interPt;
 			Vector3 interNormal;
 			float t;
-			time = GetTime();
-			//time_t time;
-			//time(&time1);
+			float t2;
+			time = (double)GetTime();
+
+			
+			//float vitesse = 0.01 * gravity.y;
+
+
+			MyDrawBox(box,false,true);
+
+
+			MyDrawSphere(sphere, 10,10);
+
+			if (sphere.ref.origin.y-sphere.radius <= box.ref.origin.y+box.extents.y)
+			{
+				velocity.y = -velocity.y;
+			}
+			sphere.ref.origin.y -= 0.5* (double)velocity.y;
+			
+			
+			
+
+			printf("velocity : %f\n", velocity.y);
+			velocity.y += Updatenewvelocity(sphere, box, gravity);
+			//printf("energie: %f\n", energie0);
+			printf("new velocity : %f\n", velocity.y);
 
 			//THE SEGMENT
-			Segment segment = { {-5,8,0},{5,-8,3} };
-			DrawLine3D(segment.pt1, segment.pt2, BLACK);
-			MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
-			MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
+			Segment segment = { {box.ref.origin},{box.ref.origin.x,box.ref.origin.y+box.extents.y,box.ref.origin.z} };
+			//DrawLine3D(segment.pt1, segment.pt2, BLACK);
+			//MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
+			//MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
+
+
+			Segment segment2 = { {box.ref.origin.x-10,box.ref.origin.y + box.extents.y,box.ref.origin.z},{box.ref.origin.x,box.ref.origin.y + box.extents.y,box.ref.origin.z} };
+			DrawLine3D(segment2.pt1, segment2.pt2, BLACK);
+			MyDrawPolygonSphere({ {segment2.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
+			MyDrawPolygonSphere({ {segment2.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
 			// TEST LINE PLANE INTERSECTION
 			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time* .5f)), 2 };
 			ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
 			QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
-			Disk quad = { refQuad,5 };
-			MyDrawDisk(quad,10);
+
 			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
-			if (IntersectSegmentDisk(segment, quad, t, interPt, interNormal))
+			if (IntersectSegmentSphere(segment2, sphere, t, t2, interNormal))
 			{
-				MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
-				DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+				//vitesse = -vitesse;
+			//	MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+			//	DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
 			}
 			
 

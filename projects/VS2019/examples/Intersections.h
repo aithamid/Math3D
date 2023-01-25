@@ -316,3 +316,39 @@ bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vecto
 //{
 //	
 //}
+
+
+bool GetSphereNewPositionAndVelocityIfCollidingWithRoundedBox(
+	Sphere sphere,
+	Box Box,
+	Vector3 velocity,
+	float deltaTime,
+	float& colT,
+	Vector3& colSpherePos,
+	Vector3& colNormal,
+	Vector3& newPosition,
+	Vector3& newVelocity)
+{
+	return true;
+}
+
+typedef struct Gravity
+{
+	Sphere sphere;
+	Box box;
+	Vector3 g = { 0, 9.81,0 };
+	Vector3 velocity = { 0,0.1,0 };
+	Vector3 newVelocity = { 0,0,0 };
+	double m = 0.1;
+	double hauteur0 = abs(sphere.ref.origin.y - sphere.radius - (box.ref.origin.y + box.extents.y));
+	double energie0 = ((m * (velocity.y * velocity.y)) / 2) + m * (g.y) * hauteur0;
+};
+
+double Updatenewvelocity(Sphere sphere,
+	Box Box, Gravity gravity) 
+{
+	
+	gravity.newVelocity.y = sqrt(2 * ((gravity.energie0 - (gravity.m * gravity.g.y * gravity.hauteur0)) / gravity.m));
+	gravity.velocity.y += gravity.newVelocity.y;
+	return (double)gravity.velocity.y;
+}
