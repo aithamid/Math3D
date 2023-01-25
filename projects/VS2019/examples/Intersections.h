@@ -337,18 +337,31 @@ typedef struct Gravity
 	Sphere sphere;
 	Box box;
 	Vector3 g = { 0, 9.81,0 };
-	Vector3 velocity = { 0,0.1,0 };
+	Vector3 velocity = { 0.1,0.1,0 };
 	Vector3 newVelocity = { 0,0,0 };
+	float vitesse=0.3f;
 	double m = 0.1;
 	double hauteur0 = abs(sphere.ref.origin.y - sphere.radius - (box.ref.origin.y + box.extents.y));
-	double energie0 = ((m * (velocity.y * velocity.y)) / 2) + m * (g.y) * hauteur0;
+	double energie0 = ((m *powf(vitesse,2)) / 2) + (m * (g.y) * hauteur0);
 };
 
-double Updatenewvelocity(Sphere sphere,
+
+Vector3 Newvectorvitesse(Vector3 velocity, float deltaTime,Vector3 g)
+{
+	velocity = Vector3Add(velocity, Vector3Scale( g, deltaTime));
+	return velocity;
+}
+
+Vector3 Updatenewvelocity(Sphere sphere,
 	Box Box, Gravity gravity) 
 {
+	Vector3 dir;
 	
-	gravity.newVelocity.y = sqrt(2 * ((gravity.energie0 - (gravity.m * gravity.g.y * gravity.hauteur0)) / gravity.m));
-	gravity.velocity.y += gravity.newVelocity.y;
-	return (double)gravity.velocity.y;
+	
+	double acceleration = sqrt(2 * ((gravity.energie0 - (gravity.m * gravity.g.y * gravity.hauteur0)) / gravity.m));
+	gravity.vitesse += acceleration;
+	dir = Vector3Normalize(gravity.velocity);
+	dir = Vector3Scale(dir, gravity.vitesse);
+	gravity.newVelocity = dir;
+	return gravity.newVelocity;
 }

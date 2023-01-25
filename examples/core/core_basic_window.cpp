@@ -270,13 +270,13 @@ int main(int argc, char* argv[])
 			{
 				velocity.y = -velocity.y;
 			}
-			sphere.ref.origin.y -= 0.5* (double)velocity.y;
+			sphere.ref.origin =Vector3Subtract(sphere.ref.origin, Vector3Scale(velocity,0.5));
 			
 			
 			
 
 			printf("velocity : %f\n", velocity.y);
-			velocity.y += Updatenewvelocity(sphere, box, gravity);
+			velocity= Updatenewvelocity(sphere, box, gravity);
 			//printf("energie: %f\n", energie0);
 			printf("new velocity : %f\n", velocity.y);
 
