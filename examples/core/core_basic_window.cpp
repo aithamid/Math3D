@@ -195,7 +195,7 @@ int main(int argc, char* argv[])
 
 	ReferenceFrame refsphere;
 	refsphere.origin = { 0,10,0 };
-	Sphere sphere = { refsphere,1 };
+	Sphere sphere = { refsphere,2 };
 
 	ReferenceFrame refbox;
 	Box box = { refbox,{5,1,5} };
@@ -206,7 +206,11 @@ int main(int argc, char* argv[])
 	double m = 0.1;
 	double hauteur0;
 	double energie0;
-	Gravity gravity = { sphere,box };
+	Gravity gravity = { sphere };
+	float colT;
+	Vector3 colSpherePos;
+	Vector3 colNormal;
+	Vector3 newPosition;
 
 
 
@@ -255,6 +259,7 @@ int main(int argc, char* argv[])
 			Vector3 interNormal;
 			float t;
 			float t2;
+			float deltaTime = GetFrameTime();
 			time = (double)GetTime();
 
 			
@@ -264,46 +269,55 @@ int main(int argc, char* argv[])
 			MyDrawBox(box,false,true);
 
 
-			MyDrawSphere(sphere, 10,10);
+			MyDrawSphere(sphere, 10,10,false);
 
-			if (sphere.ref.origin.y-sphere.radius <= box.ref.origin.y+box.extents.y)
-			{
-				velocity.y = -velocity.y;
-			}
-			sphere.ref.origin =Vector3Subtract(sphere.ref.origin, Vector3Scale(velocity,0.5));
+			//if (sphere.ref.origin.y-sphere.radius < box.ref.origin.y+box.extents.y)
+			//{
+			//	velocity.y = -velocity.y;
+			//}
+			
 			
 			
 			
 
-			printf("velocity : %f\n", velocity.y);
-			velocity= Updatenewvelocity(sphere, box, gravity);
+			//printf("velocity : %f\n", velocity.y);
+			velocity= Updatenewvelocity(sphere, gravity,0.3f);
 			//printf("energie: %f\n", energie0);
-			printf("new velocity : %f\n", velocity.y);
+			//printf("new velocity : %f\n", velocity.y);
 
 			//THE SEGMENT
-			Segment segment = { {box.ref.origin},{box.ref.origin.x,box.ref.origin.y+box.extents.y,box.ref.origin.z} };
+			Segment segment = { {sphere.ref.origin},{sphere.ref.origin.x,sphere.ref.origin.y-sphere.radius,sphere.ref.origin.z} };
 			//DrawLine3D(segment.pt1, segment.pt2, BLACK);
 			//MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
 			//MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
 
 
-			Segment segment2 = { {box.ref.origin.x-10,box.ref.origin.y + box.extents.y,box.ref.origin.z},{box.ref.origin.x,box.ref.origin.y + box.extents.y,box.ref.origin.z} };
-			DrawLine3D(segment2.pt1, segment2.pt2, BLACK);
-			MyDrawPolygonSphere({ {segment2.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
-			MyDrawPolygonSphere({ {segment2.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
+			Segment segment2 = { {box.ref.origin.x-10,box.ref.origin.y,box.ref.origin.z},{box.ref.origin.x,box.ref.origin.y + box.extents.y,box.ref.origin.z} };
+			//DrawLine3D(segment.pt1, segment.pt2, BLACK);
+			//MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
+			//MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
 			// TEST LINE PLANE INTERSECTION
-			Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time* .5f)), 2 };
-			ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
-			QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
+			//Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time* .5f)), 2 };
+			//ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
+			//QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
 
 			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
-			if (IntersectSegmentSphere(segment2, sphere, t, t2, interNormal))
+			//if (IntersectSegmentBox(segment, box, t, interNormal,interPt))
+			//{
+			//	printf("Collision\n");
+			//	//vitesse = -vitesse;
+			//	//	MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
+			//	//	DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+			//}
+			if (sphere.ref.origin.y <= 0)
 			{
-				//vitesse = -vitesse;
-			//	MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
-			//	DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+				printf("Collision\n");
 			}
-			
+			else
+			{
+				sphere.ref.origin.y -= velocity.y * 0.5;
+			}
+			GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere,	box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, newVelocity);
 
 		}
 		EndMode3D();

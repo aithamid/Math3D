@@ -242,6 +242,7 @@ bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vecto
 	{
 		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+		return true;
 	}
 
 	ReferenceFrame left = {
@@ -255,6 +256,7 @@ bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vecto
 	{
 		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+		return true;
 	}
 
 	ReferenceFrame top = {
@@ -268,6 +270,7 @@ bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vecto
 	{
 		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+		return true;
 	}
 
 	ReferenceFrame bottom = {
@@ -281,6 +284,7 @@ bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vecto
 	{
 		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+		return true;
 	}
 
 	ReferenceFrame front = {
@@ -294,6 +298,7 @@ bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vecto
 	{
 		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+		return true;
 	}
 
 	ReferenceFrame rear = {
@@ -307,8 +312,9 @@ bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vecto
 	{
 		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+		return true;
 	}
-	return false;
+	
 }
 
 
@@ -335,13 +341,12 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithRoundedBox(
 typedef struct Gravity
 {
 	Sphere sphere;
-	Box box;
 	Vector3 g = { 0, 9.81,0 };
-	Vector3 velocity = { 0.1,0.1,0 };
+	Vector3 velocity = { 0,0.1,0 };
 	Vector3 newVelocity = { 0,0,0 };
 	float vitesse=0.3f;
 	double m = 0.1;
-	double hauteur0 = abs(sphere.ref.origin.y - sphere.radius - (box.ref.origin.y + box.extents.y));
+	double hauteur0 = abs(sphere.ref.origin.y);
 	double energie0 = ((m *powf(vitesse,2)) / 2) + (m * (g.y) * hauteur0);
 };
 
@@ -352,16 +357,45 @@ Vector3 Newvectorvitesse(Vector3 velocity, float deltaTime,Vector3 g)
 	return velocity;
 }
 
+//Donne la nouvelle vitesse avec la gravite
 Vector3 Updatenewvelocity(Sphere sphere,
-	Box Box, Gravity gravity) 
+	Gravity gravity, float vitesse) 
 {
 	Vector3 dir;
-	
-	
 	double acceleration = sqrt(2 * ((gravity.energie0 - (gravity.m * gravity.g.y * gravity.hauteur0)) / gravity.m));
 	gravity.vitesse += acceleration;
 	dir = Vector3Normalize(gravity.velocity);
-	dir = Vector3Scale(dir, gravity.vitesse);
-	gravity.newVelocity = dir;
-	return gravity.newVelocity;
+	gravity.velocity = Vector3Scale(dir, gravity.vitesse);
+	return gravity.velocity;
+}
+
+
+bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
+	Sphere sphere,
+	Box box,
+	Vector3 velocity,
+	float deltaTime,
+	float& colT,
+	Vector3& colSpherePos,
+	Vector3& colNormal,
+	Vector3& newPosition,
+	Vector3& newVelocity)
+{
+	float t;
+	Vector3 interPt;
+	Vector3 interNormal;
+	Vector3 Future_position = Vector3Add(sphere.ref.origin, Vector3Scale(velocity,-3)); // la future position à la prochaine frame par rapport a sa vitesse
+	Segment segment = { sphere.ref.origin , Future_position };// Segment du centre de la sphere a sa future position 
+
+	DrawLine3D(segment.pt1, segment.pt2, BLACK);
+	MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
+	MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
+
+	Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
+	if (IntersectSegmentBox(segment, box, t, interNormal, interPt))
+	{
+		printf("Collision\n");
+	}
+	/*velocity = Newvectorvitesse(velocity, deltaTime, g);*/
+	return true;
 }
