@@ -325,6 +325,7 @@
     <ClCompile Include="..\..\..\examples\core\core_basic_window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Collisions.h" />
     <ClInclude Include="Intersections.h" />
     <ClInclude Include="My3DPrimitives.h" />
   </ItemGroup>

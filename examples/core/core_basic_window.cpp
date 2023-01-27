@@ -37,6 +37,7 @@
 #define EPSILON 1.e-6f
 #include "My3DPrimitives.h"
 #include "Intersections.h"
+#include "Collisions.h"
 
 template <typename T> int sgn(T val) {
 	return (T(0) < val) - (val < T(0));
