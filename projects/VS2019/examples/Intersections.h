@@ -242,6 +242,7 @@ bool IntersectSegmentBox(Segment seg, Box box, float& t, Vector3& interPt, Vecto
 	{
 		MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 		DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
+
 		return true;
 	}
 
@@ -381,10 +382,12 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
 	Vector3& newPosition,
 	Vector3& newVelocity)
 {
+	bool colision = false;
+	Gravity g = { sphere };
 	float t;
 	Vector3 interPt;
 	Vector3 interNormal;
-	Vector3 Future_position = Vector3Add(sphere.ref.origin, Vector3Scale(velocity,-3)); // la future position à la prochaine frame par rapport a sa vitesse
+	Vector3 Future_position = Vector3Add(sphere.ref.origin, Vector3Scale(velocity,-10)); // la future position à la prochaine frame par rapport a sa vitesse
 	Segment segment = { sphere.ref.origin , Future_position };// Segment du centre de la sphere a sa future position 
 
 	DrawLine3D(segment.pt1, segment.pt2, BLACK);
@@ -392,10 +395,19 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
 	MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
 
 	Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
-	if (IntersectSegmentBox(segment, box, t, interNormal, interPt))
+	if (IntersectSegmentBox(segment, box, t, interPt, interNormal)) // interPt le point d intersection et interNormal le vecteur normal
 	{
-		printf("Collision\n");
+		printf("  Inter pt : x : %f y : %f z : %f\n", interPt.x, interPt.y, interPt.z);
+		printf(" Inter normal : x : %f y : %f z : %f\n", interNormal.x, interNormal.y, interNormal.z);
+		newVelocity = Vector3Scale(velocity, -1);
+		printf("  New velocity : y : %f\n", newVelocity.y);
+		colision = true;
 	}
+	if (colision)
+	{
+		newVelocity = Vector3Subtract(Vector3Scale(Updatenewvelocity(sphere, g, -0.3f),2),velocity);
+	}
+
 	/*velocity = Newvectorvitesse(velocity, deltaTime, g);*/
 	return true;
 }

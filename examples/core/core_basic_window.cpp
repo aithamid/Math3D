@@ -194,8 +194,8 @@ int main(int argc, char* argv[])
 	float time = (float)GetTime();
 
 	ReferenceFrame refsphere;
-	refsphere.origin = { 0,10,0 };
-	Sphere sphere = { refsphere,2 };
+	refsphere.origin = { 3,20,2 };
+	Sphere sphere = { refsphere,1 };
 
 	ReferenceFrame refbox;
 	Box box = { refbox,{5,1,5} };
@@ -269,7 +269,7 @@ int main(int argc, char* argv[])
 			MyDrawBox(box,false,true);
 
 
-			MyDrawSphere(sphere, 10,10,false);
+			//MyDrawSphere(sphere, 10,10,false);
 
 			//if (sphere.ref.origin.y-sphere.radius < box.ref.origin.y+box.extents.y)
 			//{
@@ -309,15 +309,16 @@ int main(int argc, char* argv[])
 			//	//	MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
 			//	//	DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
 			//}
-			if (sphere.ref.origin.y <= 0)
-			{
-				printf("Collision\n");
-			}
-			else
-			{
+			//if (sphere.ref.origin.y <= 0)
+			//{
+			//	printf("Collision\n");
+			//}
+			//else
+			//{
+			GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
+			printf("%f \n", velocity.y);
 				sphere.ref.origin.y -= velocity.y * 0.5;
-			}
-			GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere,	box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, newVelocity);
+			//}
 
 		}
 		EndMode3D();
