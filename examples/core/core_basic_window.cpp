@@ -50,6 +50,8 @@ template <typename T> int sgn(T val) {
 
 int main(int argc, char* argv[])
 {
+	// CAMERA
+
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	float screenSizeCoef = .9f;
@@ -81,6 +83,10 @@ int main(int argc, char* argv[])
 	sph.rho = 25;  // how far away from the target the camera is (radius)
 	sph.theta = 45; // the rotation angle around the target  (around Y)
 	sph.phi = 45; // the tilt tangle of the camera (up/down)
+	//--------------------------------------------------------------------------------------
+
+	// END CAMERA
+	
 	float vitessesphere = 0.0;
 	Quaternion qROt = { 0,1,0,0 };
 	float time = (float)GetTime();
@@ -95,10 +101,10 @@ int main(int argc, char* argv[])
 	Vector3 g = { 0,9.81,0 };
 	Vector3 velocity = { 0,0.1,0 };
 	Vector3 newVelocity = { 0,0,0 };
-	double m = 0.1;
-	double hauteur0;
-	double energie0;
-	Gravity gravity = { sphere };
+	double m = 0.01;
+
+
+	Physics gravity = { sphere };
 	float colT;
 	Vector3 colSpherePos;
 	Vector3 colNormal;
@@ -109,9 +115,6 @@ int main(int argc, char* argv[])
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
 
 	//--------------------------------------------------------------------------------------
-	
-	hauteur0 = abs(sphere.ref.origin.y-sphere.radius - (box.ref.origin.y+box.extents.y));
-	energie0 = ((m * (velocity.y * velocity.y)) / 2) + m * (g.y) * hauteur0;
 
 	// Main game loop
 	while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -134,13 +137,18 @@ int main(int argc, char* argv[])
 
 		
 		BeginMode3D(Camera);
-		{				
+		{
+			int n = 5;
+
+			int ntotalboxes = n + 5;
+			//Box* boxes = DrawArena(n, 20);
+			
+
 			Draw3DReferential();
 			int nbBox =12;
-			DrawArena(nbBox,40);
-
+			//Box * boxes = DrawArena(nbBox,40);
 			//TESTS INTERSECTIONS
-			/*Vector3 interPt;
+			Vector3 interPt;
 			Vector3 interNormal;
 			float t;
 			float t2;
@@ -159,13 +167,11 @@ int main(int argc, char* argv[])
 			Segment segment = { {sphere.ref.origin},{sphere.ref.origin.x,sphere.ref.origin.y-sphere.radius,sphere.ref.origin.z} };
 
 
-			Segment segment2 = { {box.ref.origin.x-10,box.ref.origin.y,box.ref.origin.z},{box.ref.origin.x,box.ref.origin.y + box.extents.y,box.ref.origin.z} };
-
 			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
 
 			GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
 			printf("%f \n", velocity.y);
-				sphere.ref.origin.y -= velocity.y * 0.5;*/
+				sphere.ref.origin = Vector3Subtract(sphere.ref.origin, velocity);
 
 		}
 		EndMode3D();

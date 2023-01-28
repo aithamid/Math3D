@@ -15,7 +15,7 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithRoundedBox(
 	return true;
 }
 
-typedef struct Gravity
+typedef struct Physics
 {
 	Sphere sphere;
 	Vector3 g = { 0, 9.81,0 };
@@ -36,7 +36,7 @@ Vector3 Newvectorvitesse(Vector3 velocity, float deltaTime, Vector3 g)
 
 //Donne la nouvelle vitesse avec la gravite
 Vector3 Updatenewvelocity(Sphere sphere,
-	Gravity gravity, float vitesse)
+	Physics gravity, float vitesse)
 {
 	Vector3 dir;
 	double acceleration = sqrt(2 * ((gravity.energie0 - (gravity.m * gravity.g.y * gravity.hauteur0)) / gravity.m));
@@ -59,7 +59,7 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
 	Vector3& newVelocity)
 {
 	bool colision = false;
-	Gravity g = { sphere };
+	Physics g = { sphere };
 	float t;
 	Vector3 interPt;
 	Vector3 interNormal;
@@ -81,9 +81,10 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
 	}
 	if (colision)
 	{
-		newVelocity = Vector3Subtract(Vector3Scale(Updatenewvelocity(sphere, g, -0.3f), 2), velocity);
+		newVelocity = Vector3Negate(velocity);
+		return true;
 	}
 
 	/*velocity = Newvectorvitesse(velocity, deltaTime, g);*/
-	return true;
+	return false;
 }

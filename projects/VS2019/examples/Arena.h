@@ -22,7 +22,7 @@ void Draw3DReferential() {
 	on peut y mettre autant de box qu'on veut : n
 	et la size de l'arene
 */
-void DrawArena(int n, float s) {
+Box * DrawArena(int n, float s) {
 	n= n+5;
 	float h = s/4;
 
@@ -107,7 +107,7 @@ void DrawArena(int n, float s) {
 				boxes[(i * b) + j + 5 ] = { ref, size_boxes };
 			}
 
-			incliniaison += (PI/2) / (n/2);
+			incliniaison += (PI/3) / (n/2);
 		}
 	}
 
@@ -121,6 +121,6 @@ void DrawArena(int n, float s) {
 		MyDrawBox(boxes[i], true, true, color);
 	}
 
-
+	return boxes;
 	
 }
