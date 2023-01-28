@@ -38,124 +38,15 @@
 #include "My3DPrimitives.h"
 #include "Intersections.h"
 #include "Collisions.h"
+#include "Arena.h"
+#include "OrbitalCamera.h"
+
 
 template <typename T> int sgn(T val) {
 	return (T(0) < val) - (val < T(0));
 }
 
-struct Cylindrical {
-	float rho;
-	float theta;
-	float y;
-};
 
-struct Spherical {
-	float rho;
-	float theta;
-	float phi;
-};
-
-Vector3 CylindricalToCartesian(Cylindrical cyl) {
-	return { cyl.rho * sinf(cyl.theta), cyl.y, cyl.rho * cosf(cyl.theta) };
-}
-
-Cylindrical CartesianToCylindrical(Vector3 cart) {
-	Cylindrical cyl = {
-		sqrt((double)powf(cart.x, 2) + (double)powf(cart.z, 2)),
-		atan2(cart.x, cart.z),
-		cart.y
-	};
-
-	if (cyl.theta <= 0)
-		cyl.theta += 2 * PI;
-	return cyl;
-}
-
-Vector3 SphericalToCartesian(Spherical sph) {
-	return {
-		sph.rho * sinf(sph.phi) * sinf(sph.theta),
-		sph.rho * cosf(sph.phi),
-		sph.rho * sinf(sph.phi) * cosf(sph.theta)
-	};
-}
-
-Vector3 SphericalToCartesian(Spherical* sph) {
-	return {
-		sph->rho * sinf(sph->phi) * sinf(sph->theta),
-		sph->rho * cosf(sph->phi),
-		sph->rho * sinf(sph->phi) * cosf(sph->theta)
-	};
-}
-
-Spherical CartesianToSpherical(Vector3 cart) {
-	Spherical sph = {
-		sqrt((double)pow(cart.x, 2) + (double)pow(cart.y, 2) + (double)pow(cart.z, 2)),
-		atan2(cart.x, cart.z),
-		acosf(cart.y / sph.rho)
-	};
-
-	if (sph.theta <= 0)
-		sph.theta += 2 * PI;
-	return sph;
-}
-
-
-Vector2 MyUpdateOrbitalCamera(Camera3D* Camera, Spherical* coordonnes, Vector2 prevMousePos)
-{	
-	Vector2 newMousePos = GetMousePosition();
-	float rotSpeed = 0.25f; // to scale the mouse input
-	float moveSpeed = 3.0f; // to scale the linear input
-
-	float rhoMin = 0;
-	float rhoMax = 40;
-
-	float phiMin = -89;
-	float phiMax = 89;
-	Vector2 difference = Vector2Subtract(newMousePos, prevMousePos);
-	if (IsMouseButtonDown(1)) // only rotate on right click
-	{	
-		
-		// update the angles from the delta
-		coordonnes->theta += (difference.x) * rotSpeed;
-		coordonnes->phi += (difference.y) * rotSpeed;
-
-		// clamp the tilt so we don't get gymbal lock
-		if (coordonnes->phi > phiMax)
-			coordonnes->phi = phiMax;
-		if (coordonnes->phi < phiMin)
-			coordonnes->phi = phiMin;
-		DrawText(TextFormat("bouton droit"), 400, 50, 20, RED);
-	}
-	DrawText(TextFormat("Mouse: %.1f, %.1f", newMousePos.x, newMousePos.y), 400, 10, 20, RED);
-	DrawText(TextFormat("Diffe: %.1f, %.1f", difference.x, difference.y), 400, 30, 20, RED);
-	// always update the position so we don't get jumps
-
-
-	// vector in rotation space to move
-
-	// update zoom
-	coordonnes->rho -= 2*GetMouseWheelMove();
-	if (coordonnes->rho < rhoMin)
-		coordonnes->rho = rhoMin;
-
-	if (coordonnes->rho < rhoMax)
-		coordonnes->rho = rhoMax;
-
-	// vector we are going to transform to get the camera offset from the target point
-	Vector3 camPos = { 0, 0, coordonnes->rho };
-
-	Matrix thetaMatrix = MatrixRotateX(coordonnes->phi * GetFrameTime()); // a matrix for the tilt rotation
-	Matrix phiMatrix = MatrixRotateY(coordonnes->theta * GetFrameTime()); // a matrix for the plane rotation
-	Matrix mat = MatrixMultiply(thetaMatrix, phiMatrix); // the combined transformation matrix for the camera position
-
-	//camPos = SphericalToCartesian(coordonnes);
-
-	camPos = Vector3Transform(camPos, mat); // transform the camera position into a vector in world space
-
-	Camera->position = Vector3Add(Camera->target, camPos); // offset the camera position by the vector from the target position
-	return newMousePos;
-	
-}
 
 int main(int argc, char* argv[])
 {
@@ -230,9 +121,6 @@ int main(int argc, char* argv[])
 		// TODO: Update your variables here
 		//----------------------------------------------------------------------------------
 
-		/*float deltaTime = GetFrameTime();
-		float time = (float)GetTime();
-		*/
 		cursorPos = MyUpdateOrbitalCamera(&Camera, &sph, cursorPos);
 		
 		
@@ -247,16 +135,12 @@ int main(int argc, char* argv[])
 		
 		BeginMode3D(Camera);
 		{				
-			//3D REFERENTIAL
-			DrawGrid(20, 1.0f);        // Draw a grid
-			DrawLine3D({ 0 }, { 0,10,0 }, DARKGRAY);
-			DrawSphere({ 10,0,0 }, .2f, RED);
-			DrawSphere({ 0,10,0 }, .2f, GREEN);
-			DrawSphere({ 0,0,10 }, .2f, BLUE);
-
+			Draw3DReferential();
+			int nbBox =12;
+			DrawArena(nbBox,40);
 
 			//TESTS INTERSECTIONS
-			Vector3 interPt;
+			/*Vector3 interPt;
 			Vector3 interNormal;
 			float t;
 			float t2;
@@ -264,62 +148,24 @@ int main(int argc, char* argv[])
 			time = (double)GetTime();
 
 			
-			//float vitesse = 0.01 * gravity.y;
 
 
 			MyDrawBox(box,false,true);
-
-
-			//MyDrawSphere(sphere, 10,10,false);
-
-			//if (sphere.ref.origin.y-sphere.radius < box.ref.origin.y+box.extents.y)
-			//{
-			//	velocity.y = -velocity.y;
-			//}
-			
-			
 			
 			
 
-			//printf("velocity : %f\n", velocity.y);
+			printf("velocity : %f\n", velocity.y);
 			velocity= Updatenewvelocity(sphere, gravity,0.3f);
-			//printf("energie: %f\n", energie0);
-			//printf("new velocity : %f\n", velocity.y);
-
-			//THE SEGMENT
 			Segment segment = { {sphere.ref.origin},{sphere.ref.origin.x,sphere.ref.origin.y-sphere.radius,sphere.ref.origin.z} };
-			//DrawLine3D(segment.pt1, segment.pt2, BLACK);
-			//MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
-			//MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
 
 
 			Segment segment2 = { {box.ref.origin.x-10,box.ref.origin.y,box.ref.origin.z},{box.ref.origin.x,box.ref.origin.y + box.extents.y,box.ref.origin.z} };
-			//DrawLine3D(segment.pt1, segment.pt2, BLACK);
-			//MyDrawPolygonSphere({ {segment.pt1,QuaternionIdentity()},.15f }, 16, 8, RED);
-			//MyDrawPolygonSphere({ {segment.pt2,QuaternionIdentity()},.15f }, 16, 8, GREEN);
-			// TEST LINE PLANE INTERSECTION
-			//Plane plane = { Vector3RotateByQuaternion({0,1,0}, QuaternionFromAxisAngle({1,0,0},time* .5f)), 2 };
-			//ReferenceFrame refQuad = { Vector3Scale(plane.normal, plane.d),
-			//QuaternionFromVector3ToVector3({0,1,0},plane.normal) };
 
 			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
-			//if (IntersectSegmentBox(segment, box, t, interNormal,interPt))
-			//{
-			//	printf("Collision\n");
-			//	//vitesse = -vitesse;
-			//	//	MyDrawPolygonSphere({ {interPt,QuaternionIdentity()},.1f }, 16, 8, RED);
-			//	//	DrawLine3D(interPt, Vector3Add(Vector3Scale(interNormal, 1), interPt), RED);
-			//}
-			//if (sphere.ref.origin.y <= 0)
-			//{
-			//	printf("Collision\n");
-			//}
-			//else
-			//{
+
 			GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
 			printf("%f \n", velocity.y);
-				sphere.ref.origin.y -= velocity.y * 0.5;
-			//}
+				sphere.ref.origin.y -= velocity.y * 0.5;*/
 
 		}
 		EndMode3D();

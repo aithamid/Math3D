@@ -1,10 +1,5 @@
 #pragma once
-#define INTERSECTIONS_H
-#include "raylib.h"
-#include "raymath.h"
-#include <iostream>
-#include <cstdlib>
-//#include "My3DPrimitives.h"
+
 
 using namespace std;
 
