@@ -48,11 +48,13 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
     Vector3& newPosition,
     Vector3& newVelocity)
 {
-    Vector3 endPos = Vector3Add(sphere.ref.origin, Vector3Scale(velocity, deltaTime));
+    Vector3 endPos = Vector3Subtract(sphere.ref.origin, {0, sphere.radius, 0});
     Segment trajectory = { sphere.ref.origin, endPos };
 
-    
+    DrawSphere(endPos, 0.5, RED);
+
     Vector3 interPt, interNormal;
+    
     if (IntersectSegmentBox(trajectory, box, colT, interPt, interNormal))
     {
         colSpherePos = Vector3Lerp(sphere.ref.origin, endPos, colT);

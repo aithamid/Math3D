@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 
 	SetTargetFPS(60);
 	Camera3D Camera = {0};
-	Vector3 cameraPos = { 8.0f, 15.0f, 14.0f };
+	Vector3 cameraPos = { 16.0f, 30.0f, 28.0f };
 	Camera.fovy = 45.0f;
 	Camera.target = Vector3{ 1, 0 ,0 };
 	Camera.position = cameraPos;
@@ -89,20 +89,24 @@ int main(int argc, char* argv[])
 	
 	float vitessesphere = 0.0;
 	Quaternion qROt = { 0,1,0,0 };
-	float deltaTime = GetFrameTime();
+	
 	float time = (float)GetTime();
 
 	ReferenceFrame refsphere;
-	refsphere.origin = { 0,5,0 };
-	Sphere sphere = { refsphere,1 };
+	refsphere.origin = { 10,30,10 };
+	Sphere sphere = { refsphere,10 };
 
-	ReferenceFrame refbox;
+	ReferenceFrame refbox = ReferenceFrame(
+		{ 0,0,-2 },
+		QuaternionFromAxisAngle(
+			Vector3Normalize({ 0,0,1 }),
+			PI / 4));
 	Box box = { refbox,{10,1,10} };
 
 	Vector3 g = { 0,9.81,0 };
 	
 	Vector3 newVelocity = { 0,0,0 };
-	double m = 0.01;
+	double m = sphere.radius;
 
 
 	Physics gravity = { sphere };
@@ -110,7 +114,7 @@ int main(int argc, char* argv[])
 	Vector3 colSpherePos;
 	Vector3 colNormal;
 	Vector3 newPosition;
-	Vector3 velocity = { 0,1,0 };
+	Vector3 velocity = { 0,0.001,0 };
 
 
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
@@ -135,19 +139,15 @@ int main(int argc, char* argv[])
 		// Fonction coordonnées
 
 
-
+		float deltaTime = GetFrameTime();
 		
 		BeginMode3D(Camera);
 		{
-			int n = 5;
-
-			int ntotalboxes = n + 5;
-			//Box* boxes = DrawArena(n, 20);
 			
 
 			Draw3DReferential();
-			int nbBox =12;
-			//Box * boxes = DrawArena(nbBox,40);
+			int nbBox =3;
+			Box * boxes = DrawArena(nbBox,40);
 			//TESTS INTERSECTIONS
 			Vector3 interPt;
 			Vector3 interNormal;
@@ -157,11 +157,17 @@ int main(int argc, char* argv[])
 			deltaTime = 0.016667;// GetFrameTime();
 			
 			velocity = UpdateGravityVelocity(gravity, 0.6f, velocity, deltaTime);
-			sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
+			for (int i = 0; i<nbBox + 5; i++)
+			{
+				GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, boxes[i], velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
+				sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
+			}
+			//GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
+			//sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
 			
-			MyDrawBox(box,false,true);
+			//MyDrawBox(box,false,true);
 			
-			MyDrawSphere(sphere, 10, 10, false);
+			MyDrawSphere(sphere, 20, 20, true, true, PINK, PURPLE);
 
 			//printf("velocity : %f\n", velocity.y);
 			
@@ -171,10 +177,7 @@ int main(int argc, char* argv[])
 			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
 			
 			//
-			Vector3 newVelocity;
-			if (GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity))
-				//velocity = Vector3Add(velocity, newVelocity);
-				sphere.ref.origin = newPosition;
+			
 			//
 			//if (sphere.ref.origin.y >= sphere.radius)
 			//{
@@ -182,8 +185,9 @@ int main(int argc, char* argv[])
 			//}
 		}
 		EndMode3D();
-
 		EndDrawing();
+
+		
 		//----------------------------------------------------------------------------------
 	}
 
