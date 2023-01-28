@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 	Box box = { refbox,{5,1,5} };
 
 	Vector3 g = { 0,9.81,0 };
-	Vector3 velocity = { 0,0.1,0 };
+	
 	Vector3 newVelocity = { 0,0,0 };
 	double m = 0.01;
 
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 	Vector3 colSpherePos;
 	Vector3 colNormal;
 	Vector3 newPosition;
-
+	Vector3 velocity = Updatenewvelocity(sphere, gravity, 0.3f);
 
 
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
@@ -163,15 +163,18 @@ int main(int argc, char* argv[])
 			
 
 			printf("velocity : %f\n", velocity.y);
-			velocity= Updatenewvelocity(sphere, gravity,0.3f);
+			
 			Segment segment = { {sphere.ref.origin},{sphere.ref.origin.x,sphere.ref.origin.y-sphere.radius,sphere.ref.origin.z} };
 
 
 			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
-
+			
+			//
 			GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
+			//
+
 			printf("%f \n", velocity.y);
-				sphere.ref.origin = Vector3Subtract(sphere.ref.origin, velocity);
+			sphere.ref.origin = Vector3Subtract(sphere.ref.origin, velocity);
 
 		}
 		EndMode3D();

@@ -21,7 +21,7 @@ typedef struct Physics
 	Vector3 g = { 0, 9.81,0 };
 	Vector3 velocity = { 0,0.1,0 };
 	Vector3 newVelocity = { 0,0,0 };
-	float vitesse = 0.3f;
+	float vitesse;
 	double m = 0.1;
 	double hauteur0 = abs(sphere.ref.origin.y);
 	double energie0 = ((m * powf(vitesse, 2)) / 2) + (m * (g.y) * hauteur0);
@@ -38,6 +38,7 @@ Vector3 Newvectorvitesse(Vector3 velocity, float deltaTime, Vector3 g)
 Vector3 Updatenewvelocity(Sphere sphere,
 	Physics gravity, float vitesse)
 {
+	gravity.vitesse = vitesse;
 	Vector3 dir;
 	double acceleration = sqrt(2 * ((gravity.energie0 - (gravity.m * gravity.g.y * gravity.hauteur0)) / gravity.m));
 	gravity.vitesse += acceleration;
