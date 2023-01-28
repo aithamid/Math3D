@@ -114,6 +114,12 @@ int main(int argc, char* argv[])
 
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
 
+	Object Sphere_phy;
+
+	Vector3 g1 = { 0, -9.81f, 0 };
+
+	Sphere_phy.position = sphere.ref.origin;
+
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
@@ -160,7 +166,20 @@ int main(int argc, char* argv[])
 
 			MyDrawBox(box,false,true);
 			
-			
+			MyDrawSphere(sphere, 10, 10);
+
+			Sphere_phy.force = Vector3Add(Vector3Scale(g1, Sphere_phy.mass), Sphere_phy.force);
+			Sphere_phy.velocity = Vector3Add(Vector3Scale(Sphere_phy.force, deltaTime / Sphere_phy.mass), Sphere_phy.velocity);
+			Sphere_phy.position = Vector3Add(Sphere_phy.position,
+				Vector3Scale(Sphere_phy.velocity, deltaTime)
+			);
+			Sphere_phy.force = Vector3Zero();
+
+
+			printf("x=%f y=%f z=%f \n", sphere.ref.origin.x, sphere.ref.origin.y, sphere.ref.origin.z);
+			sphere.ref.origin = Sphere_phy.position;
+
+
 
 			printf("velocity : %f\n", velocity.y);
 			
@@ -170,7 +189,7 @@ int main(int argc, char* argv[])
 			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
 			
 			//
-			GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
+			//GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
 			//
 
 			printf("%f \n", velocity.y);
