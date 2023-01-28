@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 
 	SetTargetFPS(60);
 	Camera3D Camera = {0};
-	Vector3 cameraPos = { 16.0f, 30.0f, 28.0f };
+	Vector3 cameraPos = { 32.0f, 60.0f, 56.0f };
 	Camera.fovy = 45.0f;
 	Camera.target = Vector3{ 1, 0 ,0 };
 	Camera.position = cameraPos;
