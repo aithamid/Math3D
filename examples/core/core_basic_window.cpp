@@ -93,11 +93,11 @@ int main(int argc, char* argv[])
 	float time = (float)GetTime();
 
 	ReferenceFrame refsphere;
-	refsphere.origin = { 3,20,2 };
+	refsphere.origin = { 0,5,0 };
 	Sphere sphere = { refsphere,1 };
 
 	ReferenceFrame refbox;
-	Box box = { refbox,{5,1,5} };
+	Box box = { refbox,{10,1,10} };
 
 	Vector3 g = { 0,9.81,0 };
 	
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 	Vector3 colSpherePos;
 	Vector3 colNormal;
 	Vector3 newPosition;
-	Vector3 velocity = { 0.1,0.1,0 };
+	Vector3 velocity = { 0,1,0 };
 
 
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
@@ -154,18 +154,16 @@ int main(int argc, char* argv[])
 			float t;
 			float t2;
 			time = (double)GetTime();
-			deltaTime = GetFrameTime();
+			deltaTime = 0.016667;// GetFrameTime();
 			
-			//if (sphere.ref.origin.y >= 0)
-			//{
-				velocity = UpdateGravityVelocity(gravity, 0.6f, velocity, deltaTime);
-			//}
-
+			velocity = UpdateGravityVelocity(gravity, 0.6f, velocity, deltaTime);
+			sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
+			
 			MyDrawBox(box,false,true);
 			
 			MyDrawSphere(sphere, 10, 10, false);
 
-			printf("velocity : %f\n", velocity.y);
+			//printf("velocity : %f\n", velocity.y);
 			
 			Segment segment = { {sphere.ref.origin},{sphere.ref.origin.x,sphere.ref.origin.y-sphere.radius,sphere.ref.origin.z} };
 
@@ -173,11 +171,14 @@ int main(int argc, char* argv[])
 			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
 			
 			//
-			GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
+			Vector3 newVelocity;
+			if (GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity))
+				//velocity = Vector3Add(velocity, newVelocity);
+				sphere.ref.origin = newPosition;
 			//
 			//if (sphere.ref.origin.y >= sphere.radius)
 			//{
-				sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
+			
 			//}
 		}
 		EndMode3D();

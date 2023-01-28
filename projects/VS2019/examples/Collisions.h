@@ -18,7 +18,7 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithRoundedBox(
 typedef struct Physics
 {
 	Sphere sphere;
-	Vector3 G = { 0, -9.81,0 };
+	Vector3 G = { 0, -0.81,0 };
 	float masse=0.01;
 	float velocity_0=0.01;
 	float hauteur = sphere.ref.origin.y;
@@ -51,16 +51,16 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
     Vector3 endPos = Vector3Add(sphere.ref.origin, Vector3Scale(velocity, deltaTime));
     Segment trajectory = { sphere.ref.origin, endPos };
 
-    float t;
+    
     Vector3 interPt, interNormal;
-    if (IntersectSegmentBox(trajectory, box, t, interPt, interNormal))
+    if (IntersectSegmentBox(trajectory, box, colT, interPt, interNormal))
     {
-        colT = t;
-        colSpherePos = Vector3Lerp(sphere.ref.origin, endPos, t);
+        colSpherePos = Vector3Lerp(sphere.ref.origin, endPos, colT);
         colNormal = interNormal;
         newPosition = Vector3Reflect(Vector3Subtract(colSpherePos, sphere.ref.origin), colNormal);
         newPosition = Vector3Add(sphere.ref.origin, newPosition);
         newVelocity = Vector3Reflect(velocity, colNormal);
+        printf("OK");
         return true;
     }
     else
