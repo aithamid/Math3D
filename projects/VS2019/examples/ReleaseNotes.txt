@@ -4,6 +4,7 @@ Adam AT HAMID
 Angelo GIORDANO
 
 - Le chemin relatif : $(PROJECT_DIR)\projects\VS2019 
+Cliquer sur raylib.sln
 puis définir "core_basic_windows_cpp" en tant que projet de démarrage
 
 - Nos remarques particuliers :
