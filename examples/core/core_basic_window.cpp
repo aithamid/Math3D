@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
 			
 			// RENDER ENGINE PART
 			Box* boxes = DrawArena(rot);
-			MyDrawSphere(sphere, 20, 20, false, true, PINK, PURPLE);
+			MyDrawSphere(sphere, 20, 20, true, true, LIGHTGRAY, BLACK);
 
 			// PHYSIC ENGINE PART
 			velocity = UpdateGravityVelocity(gravity, 1.0f, velocity, deltaTime);
