@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 
 	Vector3 g = { 0,9.81,0 };
 	
-	Vector3 newVelocity = { 0,0,0 };
+	
 	double m = sphere.radius;
 
 
@@ -146,46 +146,33 @@ int main(int argc, char* argv[])
 		BeginMode3D(Camera);
 		{
 			
-
-			//Draw3DReferential();
-			Box * boxes = DrawArena(rot);
 			//TESTS INTERSECTIONS
 			Vector3 interPt;
 			Vector3 interNormal;
 			float t;
 			float t2;
 			time = (double)GetTime();
-			deltaTime = 0.016667;// GetFrameTime();
+			deltaTime = GetFrameTime();
 			
-			velocity = UpdateGravityVelocity(gravity, 1.0f, velocity, deltaTime);
-			for (int i = 0; i< sizeof(boxes); i++)
-			{
-				GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, boxes[i], velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
-				if(sphere.ref.origin.y>=0)
-					sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
-			}
-			
-			//GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
-			//sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
-			
-			//MyDrawBox(box,false,true);
-			
+			// RENDER ENGINE PART
+			Box* boxes = DrawArena(rot);
 			MyDrawSphere(sphere, 20, 20, false, true, PINK, PURPLE);
 
-			//printf("velocity : %f\n", velocity.y);
-			
-			Segment segment = { {sphere.ref.origin},{sphere.ref.origin.x,sphere.ref.origin.y-sphere.radius,sphere.ref.origin.z} };
+			// PHYSIC ENGINE PART
+			velocity = UpdateGravityVelocity(gravity, 1.0f, velocity, deltaTime);
+
+			Vector3 newVelocity = Vector3Zero();
+
+
+			// Check collision
+			if (GetSphereNewPositionAndVelocityIfCollidingWithRoundedBoxes
+			(sphere, boxes, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, newVelocity))
+				// Réponse de la collision
+				velocity = newVelocity;
+
+			sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
 
 			
-			Line line = { segment.pt1,Vector3Subtract(segment.pt2,segment.pt1) };
-			
-			//
-			
-			//
-			//if (sphere.ref.origin.y >= sphere.radius)
-			//{
-			
-			//}
 		}
 		EndMode3D();
 		EndDrawing();

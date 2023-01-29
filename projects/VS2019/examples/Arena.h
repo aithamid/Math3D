@@ -18,14 +18,9 @@ Quaternion * RandomQuartenions(int n) {
 	return rot;
 }
 
-void Draw3DReferential() {
-	//3D REFERENTIAL
-	//DrawGrid(20, 1.0f);        // Draw a grid
-	//DrawLine3D({ 0 }, { 0,10,0 }, DARKGRAY);
-	//DrawSphere({ 10,0,0 }, .2f, RED);
-	//DrawSphere({ 0,10,0 }, .2f, GREEN);
-	//DrawSphere({ 0,0,10 }, .2f, BLUE);
-}
+
+// FONCTION POUR TRACER L'ARENE 
+
 
 Box * DrawArena(Quaternion * rot) {
 	float s = 80;
@@ -34,9 +29,9 @@ Box * DrawArena(Quaternion * rot) {
 	float h = s/4;
 
 	Box * boxes = (Box *) malloc(n *sizeof(Box));
+	// **********************************************
+	// ON DESSINE LA BOX BOX SOL 
 
-	// BOX SOL 
-	//DrawGrid((s*2)-2,1);
 	Vector3 size = { s-1,h,1 };
 	ReferenceFrame ref = ReferenceFrame(
 		{0,-1,0},
@@ -45,6 +40,9 @@ Box * DrawArena(Quaternion * rot) {
 			PI / 4));
 	boxes[0] = {ref, {s-1,1,s-1}};
 	MyDrawBox(boxes[0], true, true, DARKGREEN);
+
+	// **********************************************
+
 
 	// LES BOXS QUI ENTOURE L'ARENE
 
@@ -66,10 +64,10 @@ Box * DrawArena(Quaternion * rot) {
 				Vector3Normalize({ 0,rot1[i-1],0}),
 				PI / 2));
 		boxes[i] = { ref, size};
-		//MyDrawBox(boxes[i]);
 	}
 
-	// Le reste des boxs
+	// **********************************************
+
 	// SOME MATHS
 	//
 	int aplacer = n - 5;
@@ -92,28 +90,6 @@ Box * DrawArena(Quaternion * rot) {
 
 	float incliniaison = 0;
 
-	//for (int i = 0; i < a; i++)
-	//{
-	//	for (int j = 0; j < b; j++)
-	//	{
-
-	//		float x0 = (t_a * (i)) + t_a/2 -s;
-	//		float z0 = (t_b * (j)) + t_b/2 -s;
-
-	//		if (((i * b) + j) < aplacer) {
-	//			Vector3 size_boxes = {
-	//			t_a / 4,
-	//			3,
-	//			t_b / 2.8
-	//			};
-	//			ReferenceFrame ref = ReferenceFrame(
-	//				{ x0,h_o,z0 }, rot[(i * b) + j]);
-	//			boxes[(i * b) + j + 5 ] = { ref, size_boxes };
-	//		}
-
-	//	}
-	//}
-
 	float placement = -70;
 	for (int i = 5; i < n; i++)
 	{
@@ -123,21 +99,6 @@ Box * DrawArena(Quaternion * rot) {
 				MyDrawBox(boxes[i], true, true , LIGHTGRAY);
 				placement += (10.0f * i);
 	}
-
-	//ReferenceFrame ref1;
-	//ref.origin = { placement,20.0f,placement / 2 };
-	//boxes[5] = { ref1, {20,10,10 } };
-	//MyDrawBox(boxes[5], true, true, LIGHTGRAY);
-	//placement += (10.0f * 8);
-
-	//ReferenceFrame ref2;
-	//ref.origin = { placement,20.0f,placement / 2 };
-	//boxes[6] = { ref, {20,10,10 } };
-	//MyDrawBox(boxes[6], true, true, LIGHTGRAY);
-	//placement += (10.0f * 6);
-
-
-
 
 	// DRAW BOXES
 
