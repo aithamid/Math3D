@@ -1,0 +1,53 @@
+Release Notes
+
+Adam AT HAMID
+Angelo GIORDANO
+
+- Le chemin relatif :
+
+- Nos remarques particuliers :
+
+. Remarque 1
+Nous n'avons pas réussi à faire l'interesection (segment/cylindre infini) alors qu'on y consacré beaucoup de temps
+Pour conséquences, nous n'avons pas réussi les intersections qui se basent sur le cylindre.
+ - Les intesections en question :
+ + Segment - Cylinder
+ + Segment - Capsule
+ + Segment - RoundedBox
+
+Ainsi que la collision sphere - roundedbox
+
+C'est pourquoi nous avons remplacer cela avec une collision sphere - box  
+
+. Remarque 2
+Pour le TD1 et le TD2, nous avons eu plus d'exemple de code en annexe que sur le TD3.
+
+Pour nous c'est la première fois qu'on crée un moteur physique, je trouve dommage qu'il n'y est pas eu d'annexe aussi complet que le TD1 et le TD2.
+Une fonction qui nous introduit (comme la MyDrawQuad pour TD1 et IntersectLinePlane dans le 2)	
+
+. Remarque 3
+.
+
+- Répartaition du projet 
+
+Un moteur de jeu étant constitué de deux parties :
+. Moteur du rendu
+. Moteur Physique
+
+On a essayé de repartir le projet selon les points forts de chacun.
+Celui avait des facilités en graphisme il prend des formes plus complexes.
+Celui avait des facilités en physique il prend des intersections plus complexes.
+
+Adam :
+
+Les formes (Disk, Sphere, Cylinder, RoundedBox)
+2- 3 intersections
+La direction de la sphere après collision
+
+Angelo :
+
+Les formes (Box, Quad)
+La gravité
+2- 3 intersections
+
+Le reste des taches c'est du 50/50, il y en a un qui commence l'autre qui finit.

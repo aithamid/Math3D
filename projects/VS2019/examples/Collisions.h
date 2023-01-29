@@ -91,6 +91,22 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
 }
 
 
+bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
+    Sphere sphere,
+    Box box,
+    Vector3 velocity,
+    float deltaTime,
+    float& colT,
+    Vector3& colSpherePos,
+    Vector3& colNormal,
+    Vector3& newPosition,
+    Vector3& newVelocity)
+{
+    
+}
+
+
+
 bool GetSphereNewPositionAndVelocityIfCollidingWithRoundedBoxes(
     Sphere sphere,
     Box * boxes,
