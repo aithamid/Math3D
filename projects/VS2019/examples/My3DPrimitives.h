@@ -648,6 +648,9 @@ void MyDrawPolygonCylinder(Cylinder cylinder, int nSectors, bool drawCaps = fals
     }
 }
 
+// LA FONCTION DU CYCLINDER EST SIMILAIRE A CELLE DU DISQUE 
+
+// car le calcul est le meme 
 
 void MyDrawWireframeCylinder(Cylinder cylinder, int nSectors, bool drawCaps = false, Color color = DARKGRAY, int parts = 1)
 {
@@ -747,6 +750,8 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
     drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
     Color wireframeColor = DARKGRAY)
 {
+
+    // LES QUADS DE LA ROUNDED BOX
 
     Vector3 size = roundedBox.extents;
     ReferenceFrame right = {
@@ -885,8 +890,7 @@ void MyDrawRoundedBox(RoundedBox roundedBox, int nSectors, bool
     Vector3 a[8] = {
         {0,0,0}, //ok
         {0,1,0}, //ok
-        {0,1,2}, // 
-        //{1,0,0}, //ok
+        {0,1,2}, // ok
         {0,0,2}, // ok
         {1,-1,-1}, //ok
         {0,2,0}, // ok
