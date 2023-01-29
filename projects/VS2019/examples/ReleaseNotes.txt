@@ -3,7 +3,8 @@ Release Notes
 Adam AT HAMID
 Angelo GIORDANO
 
-- Le chemin relatif :
+- Le chemin relatif : $(PROJECT_DIR)\projects\VS2019 
+puis définir "core_basic_windows_cpp" en tant que projet de démarrage
 
 - Nos remarques particuliers :
 
