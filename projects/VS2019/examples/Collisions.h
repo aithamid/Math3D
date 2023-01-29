@@ -50,7 +50,7 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
 {
     Physics gravity = { sphere };
     Vector3 endPos = Vector3Subtract(sphere.ref.origin, {0, sphere.radius, 0});
-    Vector3 velocity_nor = Vector3Normalize(velocity);
+    Vector3 velocity_nor = Vector3Scale(Vector3Normalize(velocity), sphere.radius);
     Vector3 origin_radius = { sphere.ref.origin.x + sphere.radius,sphere.ref.origin.y + sphere.radius,sphere.ref.origin.z + sphere.radius };
     velocity_nor = Vector3Add(sphere.ref.origin,velocity_nor);
     Segment trajectory = { sphere.ref.origin, velocity_nor };

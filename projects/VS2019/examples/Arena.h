@@ -1,10 +1,21 @@
 #pragma once
 
-float RandomFloat(float a, float b) {
-	float random = ((float)rand()) / (float)RAND_MAX;
-	float diff = b - a;
-	float r = random * diff;
-	return a + r;
+Quaternion * RandomQuartenions(int n) {
+	Quaternion* rot = (Quaternion*) malloc(sizeof(Quaternion) * n);
+	for (int i = 0; i < n; i++)
+	{
+		float x = ((float)rand());
+		float y = ((float)rand());
+		float z = ((float)rand());
+
+		float theta = ((float)rand());
+		rot[i] = QuaternionFromAxisAngle(
+			Vector3Normalize({ x,y,z }),
+			 (theta *PI)
+		);
+	}
+
+	return rot;
 }
 
 void Draw3DReferential() {
@@ -16,13 +27,9 @@ void Draw3DReferential() {
 	//DrawSphere({ 0,0,10 }, .2f, BLUE);
 }
 
-//  DESSINER ADAPTATIF DE L'ARENE
-
-/* Adaptatif : pourquoi ?
-	on peut y mettre autant de box qu'on veut : n
-	et la size de l'arene
-*/
-Box * DrawArena(int n, float s) {
+Box * DrawArena(Quaternion * rot) {
+	float s = 40;
+	int n = 23;
 	n= n+5;
 	float h = s/4;
 
@@ -43,7 +50,7 @@ Box * DrawArena(int n, float s) {
 
 	float y = size.y;
 
-	float rot[4] = {1,1,0,0};
+	float rot1[4] = {1,1,0,0};
 	Vector3 bords[4] = {
 			{ s,y,0 },
 			{ -s,y,0 },
@@ -56,7 +63,7 @@ Box * DrawArena(int n, float s) {
 		ReferenceFrame ref = ReferenceFrame(
 			bords[i-1],
 			QuaternionFromAxisAngle(
-				Vector3Normalize({ 0,rot[i-1],0}),
+				Vector3Normalize({ 0,rot1[i-1],0}),
 				PI / 2));
 		boxes[i] = { ref, size};
 		MyDrawBox(boxes[i]);
@@ -81,7 +88,7 @@ Box * DrawArena(int n, float s) {
 	// OBSTACLES
 
 	// hauteur des obstacles
-	float h_o =  y/2;
+	float h_o =  y*2;
 
 	float incliniaison = 0;
 
@@ -95,19 +102,15 @@ Box * DrawArena(int n, float s) {
 
 			if (((i * b) + j) < aplacer) {
 				Vector3 size_boxes = {
-				t_a / 2.5,
-				1,
+				t_a / 4,
+				3,
 				t_b / 2.8
 				};
 				ReferenceFrame ref = ReferenceFrame(
-					{ x0,h_o,z0 },
-					QuaternionFromAxisAngle(
-						Vector3Normalize({ 1,1,1 }),
-						incliniaison));
+					{ x0,h_o,z0 }, rot[(i * b) + j]);
 				boxes[(i * b) + j + 5 ] = { ref, size_boxes };
 			}
 
-			incliniaison += (PI/3) / (n/2);
 		}
 	}
 
@@ -117,7 +120,9 @@ Box * DrawArena(int n, float s) {
 	{
 		Color color = LIGHTGRAY;
 		if (i >= 5)
+		{
 			color = GREEN;
+		}
 		MyDrawBox(boxes[i], true, true, color);
 	}
 

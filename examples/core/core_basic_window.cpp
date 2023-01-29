@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 	float time = (float)GetTime();
 
 	ReferenceFrame refsphere;
-	refsphere.origin = { 0,30,0 };
+	refsphere.origin = { 0,50,0 };
 	Sphere sphere = { refsphere,5 };
 
 	ReferenceFrame refbox = ReferenceFrame(
@@ -114,12 +114,14 @@ int main(int argc, char* argv[])
 	Vector3 colSpherePos;
 	Vector3 colNormal;
 	Vector3 newPosition;
-	Vector3 velocity = { 0.0,0.00,0 };
+	Vector3 velocity = {0.01, 0, 0};
 
 
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
 
 	//--------------------------------------------------------------------------------------
+
+	Quaternion* rot = RandomQuartenions(25);
 
 	// Main game loop
 	while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -146,8 +148,7 @@ int main(int argc, char* argv[])
 			
 
 			Draw3DReferential();
-			int nbBox =2;
-			Box * boxes = DrawArena(nbBox,40);
+			Box * boxes = DrawArena(rot);
 			//TESTS INTERSECTIONS
 			Vector3 interPt;
 			Vector3 interNormal;
@@ -157,7 +158,7 @@ int main(int argc, char* argv[])
 			deltaTime = 0.016667;// GetFrameTime();
 			
 			velocity = UpdateGravityVelocity(gravity, 1.0f, velocity, deltaTime);
-			for (int i = 0; i<nbBox + 5; i++)
+			for (int i = 0; i< sizeof(boxes); i++)
 			{
 				GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, boxes[i], velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
 				sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
