@@ -29,7 +29,7 @@ void Draw3DReferential() {
 
 Box * DrawArena(Quaternion * rot) {
 	float s = 40;
-	int n = 23;
+	int n = 3;
 	n= n+5;
 	float h = s/4;
 

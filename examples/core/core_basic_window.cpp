@@ -114,14 +114,14 @@ int main(int argc, char* argv[])
 	Vector3 colSpherePos;
 	Vector3 colNormal;
 	Vector3 newPosition;
-	Vector3 velocity = {0.01, 0, 0};
+	Vector3 velocity = {-0.01, 0, 0};
 
 
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
 
 	//--------------------------------------------------------------------------------------
 
-	Quaternion* rot = RandomQuartenions(25);
+	Quaternion* rot = RandomQuartenions(50);
 
 	// Main game loop
 	while (!WindowShouldClose())    // Detect window close button or ESC key
