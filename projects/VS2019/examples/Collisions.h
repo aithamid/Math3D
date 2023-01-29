@@ -18,7 +18,7 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithRoundedBox(
 typedef struct Physics
 {
 	Sphere sphere;
-	Vector3 G = { 0, -0.81,0 };
+	Vector3 G = { 0, -2.81,0 };
 	float masse=0.01;
 	float velocity_0=0.01;
 	float hauteur = sphere.ref.origin.y;
