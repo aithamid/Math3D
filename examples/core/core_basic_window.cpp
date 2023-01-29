@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 	float time = (float)GetTime();
 
 	ReferenceFrame refsphere;
-	refsphere.origin = { 20,30,0 };
+	refsphere.origin = { 20,30,-30 };
 	Sphere sphere = { refsphere,5 };
 
 	ReferenceFrame refbox = ReferenceFrame(
@@ -102,8 +102,6 @@ int main(int argc, char* argv[])
 			Vector3Normalize({ 0,0,1 }),
 			PI / 4));
 	Box box = { refbox,{10,1,10} };
-
-	Vector3 g = { 0,9.81,0 };
 	
 	
 	double m = sphere.radius;
@@ -114,7 +112,7 @@ int main(int argc, char* argv[])
 	Vector3 colSpherePos;
 	Vector3 colNormal;
 	Vector3 newPosition;
-	Vector3 velocity = {0.1, 0, 0};
+	Vector3 velocity = {0, 0, 0};
 
 
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point

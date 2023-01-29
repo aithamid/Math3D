@@ -91,24 +91,24 @@ Box* DrawArena(Quaternion* rot) {
 	float incliniaison = 0;
 
 	float placement = -70;
-	for (int i = 5; i < n; i++)
+	for (int i = 5; i < 7; i++)
 	{
 		ReferenceFrame ref;
 		/*ref.origin = {placement,20.0f,placement/2 };*/
-		boxes[i] = { ref, {20,10,5 } };
+		boxes[i] = { ref, {80,10,5 } };
 		//MyDrawBox(boxes[i], true, true , LIGHTGRAY);
 		//placement += (10.0f * i);
 	}
 	boxes[5].ref = ReferenceFrame({ 0,-1,0 },
 		QuaternionFromAxisAngle(
 			Vector3Normalize({ 1,0,0 }), 3 * PI / 4));
-	boxes[5].ref.origin = { -30.0f, 20.0f, -30.0f };
+	boxes[5].ref.origin = { 0.0f, 10.0f, -30.0f };
 
 
 	boxes[6].ref = ReferenceFrame({ 0,-1,0 },
 		QuaternionFromAxisAngle(
 			Vector3Normalize({ 1,0,0 }), PI / 4));
-	boxes[6].ref.origin = { -30.0f, 20.0f, 30.0f };
+	boxes[6].ref.origin = { 0.0f, 10.0f, 30.0f };
 
 
 	// DRAW BOXES
