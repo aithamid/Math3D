@@ -225,6 +225,11 @@ void MyDrawDisk(Disk disk, int nSectors, bool drawPolygon = true, bool
 //BOX
 void MyDrawWireframeBox(Box box, Color color = DARKGRAY)
 {
+    // UNE BOX EST COMPOSÉ DE 6 COTÉS 
+
+    //  On dessise 6 quads 
+
+
     Vector3 size = box.extents;
     ReferenceFrame right = {
         Vector3Add(box.ref.origin,Vector3Scale(box.ref.i,box.extents.x)),
@@ -277,6 +282,10 @@ void MyDrawWireframeBox(Box box, Color color = DARKGRAY)
 
 void MyDrawPolygonBox(Box box, Color color = LIGHTGRAY)
 {
+    // UNE BOX EST COMPOSÉ DE 6 COTÉS 
+
+    //  On dessise 6 quads 
+
     Vector3 size = box.extents;
     ReferenceFrame right = {
         Vector3Add(box.ref.origin,Vector3Scale(box.ref.i,box.extents.x)),
@@ -334,8 +343,9 @@ void MyDrawBox(Box box, bool drawPolygon = true, bool drawWireframe = true, Colo
     if (drawWireframe)MyDrawWireframeBox(box, wireframeColor);
 }
 
+// Fonction permettant de trouver les coordonnées d'une sphere
 
-Vector3 Find_coo(int i,int nMeridians, int j, int nParallels, float r, float portion = PI, Vector3 position = {0,0,0})
+Vector3 Coordonnes_sphere(int i,int nMeridians, int j, int nParallels, float r, float portion = PI, Vector3 position = {0,0,0})
 {
     float lon = (i - 0) * (portion - -portion) / (nMeridians - 0) + -portion;
     float lat = (j - 0) * (HALF_PI - -HALF_PI) / (nParallels - 0) + -HALF_PI;
@@ -359,11 +369,13 @@ void MyDrawPolygonSphere(Sphere sphere, int nMeridians, int nParallels, Color co
     {
         for (int j = 1; j < nParallels + 1; j++)
         {
-            
-            Vector3 p1 = Find_coo(i - 1, nMeridians, j - 1, nParallels, 1);
-            Vector3 p2 = Find_coo(i - 1, nMeridians, j, nParallels, 1);
-            Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, 1);
-            Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, 1);
+            // Ici j'appelle la fonction Coordonnes_sphere qui va me donner 4 points 
+            // ces coordonnees serviront pour tracer les triangles
+
+            Vector3 p1 = Coordonnes_sphere(i - 1, nMeridians, j - 1, nParallels, 1);
+            Vector3 p2 = Coordonnes_sphere(i - 1, nMeridians, j, nParallels, 1);
+            Vector3 p3 = Coordonnes_sphere(i, nMeridians, j - 1, nParallels, 1);
+            Vector3 p4 = Coordonnes_sphere(i, nMeridians, j, nParallels, 1);
 
             int numVertex = 12;
             if (rlCheckBufferLimit(numVertex)) rlglDraw();
@@ -379,6 +391,7 @@ void MyDrawPolygonSphere(Sphere sphere, int nMeridians, int nParallels, Color co
 
             rlColor4ub(color.r, color.g, color.b, color.a);
                 
+            // tracer 2 triangles avant 
 
             rlVertex3f(p1.x,p1.y,p1.z);
             rlVertex3f(p2.x,p2.y,p2.z);
@@ -387,6 +400,8 @@ void MyDrawPolygonSphere(Sphere sphere, int nMeridians, int nParallels, Color co
             rlVertex3f(p2.x, p2.y, p2.z);
             rlVertex3f(p1.x, p1.y, p1.z);
             rlVertex3f(p3.x, p3.y, p3.z);
+
+            // tracer 2 triangles arrière
 
             rlVertex3f(p4.x, p4.y, p4.z);
             rlVertex3f(p2.x, p2.y, p2.z);
@@ -413,10 +428,10 @@ void MyDrawWireframeSphere(Sphere sphere, int nMeridians, int nParallels, Color 
         for (int j = 1; j < nParallels + 1; j++)
         {
             Vector3 p = { 0,0,0 };  //position de la sphere
-            Vector3 p1 = Find_coo(i - 1, nMeridians, j - 1, nParallels, 1);
-            Vector3 p2 = Find_coo(i - 1, nMeridians, j, nParallels, 1);
-            Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, 1);
-            Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, 1);
+            Vector3 p1 = Coordonnes_sphere(i - 1, nMeridians, j - 1, nParallels, 1);
+            Vector3 p2 = Coordonnes_sphere(i - 1, nMeridians, j, nParallels, 1);
+            Vector3 p3 = Coordonnes_sphere(i, nMeridians, j - 1, nParallels, 1);
+            Vector3 p4 = Coordonnes_sphere(i, nMeridians, j, nParallels, 1);
 
             int numVertex = 8;
             if (rlCheckBufferLimit(numVertex)) rlglDraw();
@@ -468,16 +483,7 @@ void MyDrawSphere(Sphere sphere, int nMeridians, int nParallels, bool
 
 // DEMI SPHERE
 
-void MyDrawPolygonPortionSphere(Sphere sphere, int nMeridians, int nParallels, Color color = LIGHTGRAY, int parts = 2)
-{
-    
 
-}
-void MyDrawWireframePortionSphere(Sphere sphere, int nMeridians, int nParallels, Color color = DARKGRAY, int parts = 2)
-{
-    
-
-}
 
 void MyDrawPortionSphere(Sphere sphere, int nMeridians, int nParallels, bool
     drawPolygon = true, bool drawWireframe = true, Color polygonColor = LIGHTGRAY,
@@ -503,10 +509,10 @@ void MyDrawPortionSphere(Sphere sphere, int nMeridians, int nParallels, bool
     {
         for (int j = 1; j < P + 1; j++)
         {
-            Vector3 p1 = Find_coo(i - 1, nMeridians, j - 1, nParallels, 1, HALF_PI);
-            Vector3 p2 = Find_coo(i - 1, nMeridians, j, nParallels, 1, HALF_PI);
-            Vector3 p3 = Find_coo(i, nMeridians, j - 1, nParallels, 1, HALF_PI);
-            Vector3 p4 = Find_coo(i, nMeridians, j, nParallels, 1, HALF_PI);
+            Vector3 p1 = Coordonnes_sphere(i - 1, nMeridians, j - 1, nParallels, 1, HALF_PI);
+            Vector3 p2 = Coordonnes_sphere(i - 1, nMeridians, j, nParallels, 1, HALF_PI);
+            Vector3 p3 = Coordonnes_sphere(i, nMeridians, j - 1, nParallels, 1, HALF_PI);
+            Vector3 p4 = Coordonnes_sphere(i, nMeridians, j, nParallels, 1, HALF_PI);
 
             if (drawPolygon) {
                 int numVertex = 12;
@@ -578,6 +584,16 @@ void MyDrawPortionSphere(Sphere sphere, int nMeridians, int nParallels, bool
             }
         }
     }
+}
+
+void MyDrawPolygonPortionSphere(Sphere sphere, int nMeridians, int nParallels, Color color = LIGHTGRAY, int parts = 2)
+{
+    MyDrawPortionSphere(sphere, nMeridians, nParallels, true, false, color, LIGHTGRAY, parts);
+}
+
+void MyDrawWireframePortionSphere(Sphere sphere, int nMeridians, int nParallels, Color color = DARKGRAY, int parts = 2)
+{
+    MyDrawPortionSphere(sphere, nMeridians, nParallels,  false, true, LIGHTGRAY, color, parts);
 }
 
 
