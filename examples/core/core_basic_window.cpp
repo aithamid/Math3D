@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 
 	Vector2 mouse = { 0,0 };
 	static Vector2 ancienne_mouse = { 0,0 };
-	Vector2 difference;// = { 0,0 };
+	Vector2 difference;
 
 	InitWindow(screenWidth, screenHeight, "ESIEE - E3FI - 2022 - 2023 -Maths 3D");
 
@@ -73,13 +73,8 @@ int main(int argc, char* argv[])
 	Camera.up = { 0.0f, 1.0f, 0.0f };
 	Camera.type = CAMERA_PERSPECTIVE;
 	Spherical sph;
-	ReferenceFrame ref = ReferenceFrame(
-		{ 1,3,-2 },
-		QuaternionFromAxisAngle(
-			Vector3Normalize({ 0,0,0 }),
-			PI / 4));
-	//Sphere sphere = { ref, 3 };
-	//sphere.ref.origin = { -10,5,-5 };
+
+
 	sph.rho = 25;  // how far away from the target the camera is (radius)
 	sph.theta = 45; // the rotation angle around the target  (around Y)
 	sph.phi = 45; // the tilt tangle of the camera (up/down)
@@ -87,6 +82,9 @@ int main(int argc, char* argv[])
 
 	// END CAMERA
 	
+
+	// VARIABLES DE LA SIMULATION 3D 
+
 	float vitessesphere = 0.0;
 	Quaternion qROt = { 0,1,0,0 };
 	
