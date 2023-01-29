@@ -93,8 +93,8 @@ int main(int argc, char* argv[])
 	float time = (float)GetTime();
 
 	ReferenceFrame refsphere;
-	refsphere.origin = { 10,30,10 };
-	Sphere sphere = { refsphere,10 };
+	refsphere.origin = { 0,30,0 };
+	Sphere sphere = { refsphere,5 };
 
 	ReferenceFrame refbox = ReferenceFrame(
 		{ 0,0,-2 },
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 	Vector3 colSpherePos;
 	Vector3 colNormal;
 	Vector3 newPosition;
-	Vector3 velocity = { 0,0.001,0 };
+	Vector3 velocity = { 0.0,0.00,0 };
 
 
 	Vector2 cursorPos = GetMousePosition(); // save off current position so we have a start point
@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
 			
 
 			Draw3DReferential();
-			int nbBox =3;
+			int nbBox =2;
 			Box * boxes = DrawArena(nbBox,40);
 			//TESTS INTERSECTIONS
 			Vector3 interPt;
@@ -156,18 +156,19 @@ int main(int argc, char* argv[])
 			time = (double)GetTime();
 			deltaTime = 0.016667;// GetFrameTime();
 			
-			velocity = UpdateGravityVelocity(gravity, 0.6f, velocity, deltaTime);
+			velocity = UpdateGravityVelocity(gravity, 1.0f, velocity, deltaTime);
 			for (int i = 0; i<nbBox + 5; i++)
 			{
 				GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, boxes[i], velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
 				sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
 			}
+			
 			//GetSphereNewPositionAndVelocityIfCollidingWithBox(sphere, box, velocity, deltaTime, colT, colSpherePos, colNormal, newPosition, velocity);
 			//sphere.ref.origin = Vector3Add(sphere.ref.origin, velocity);
 			
 			//MyDrawBox(box,false,true);
 			
-			MyDrawSphere(sphere, 20, 20, true, true, PINK, PURPLE);
+			MyDrawSphere(sphere, 20, 20, false, true, PINK, PURPLE);
 
 			//printf("velocity : %f\n", velocity.y);
 			

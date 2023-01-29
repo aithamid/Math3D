@@ -10,10 +10,10 @@ float RandomFloat(float a, float b) {
 void Draw3DReferential() {
 	//3D REFERENTIAL
 	DrawGrid(20, 1.0f);        // Draw a grid
-	DrawLine3D({ 0 }, { 0,10,0 }, DARKGRAY);
-	DrawSphere({ 10,0,0 }, .2f, RED);
-	DrawSphere({ 0,10,0 }, .2f, GREEN);
-	DrawSphere({ 0,0,10 }, .2f, BLUE);
+	//DrawLine3D({ 0 }, { 0,10,0 }, DARKGRAY);
+	//DrawSphere({ 10,0,0 }, .2f, RED);
+	//DrawSphere({ 0,10,0 }, .2f, GREEN);
+	//DrawSphere({ 0,0,10 }, .2f, BLUE);
 }
 
 //  DESSINER ADAPTATIF DE L'ARENE
