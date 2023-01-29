@@ -73,6 +73,10 @@ bool GetSphereNewPositionAndVelocityIfCollidingWithBox(
         {
             newVelocity.y += 0.005;
         }
+        else if (newVelocity.y >= 0.3)
+        {
+            newVelocity.y -= 0.005;
+        }
         return true;
     }
     else
